@@ -18,6 +18,7 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import user from './reducers/user';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
+
 export type StackParamList = {
   Signup: undefined;
   TabNavigator: undefined;
@@ -56,9 +57,9 @@ const TabNavigator = () => {
           iconName = "house";
         }
 
-        return <FontAwesome name={iconName} size={size} color={color} />;
+        return <FontAwesome name={iconName} size={size} color={color} />; 
       },
-      tabBarActiveTintColor: "#e8be4b",
+      tabBarActiveTintColor: "#5F038A",
       tabBarInactiveTintColor: "#b2b2b2",
       headerShown: false,
     })}
