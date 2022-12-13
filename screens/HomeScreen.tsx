@@ -1,14 +1,14 @@
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View, SafeAreaView} from 'react-native';
 import React from 'react';
 
 export default function HomeScreen() {
  return (
-   <View>
+   <SafeAreaView>
      <Text>Home Screen</Text>
      <Button
        title="Go to Contact"
        
      />
-   </View>
+   </SafeAreaView>
  );
 }
