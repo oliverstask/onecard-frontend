@@ -47,14 +47,23 @@ export default function SignupScreen({
               placeholder='Password'>
       </TextInput>
 
-      <Pressable style={styles.button}>
+      <Pressable 
+      style={styles.button}
+      onPress={() => navigation.navigate('TabNavigator')}
+      >
+
         <Text style={styles.textButton}>Sign-Up</Text>
       </Pressable>
     </View>
-     <Button
-       title="Sign-Up"
-       onPress={() => navigation.navigate('TabNavigator')}
-     />
+    <View>
+      <Text>Already have an account ?</Text>
+    <Pressable
+      style={styles.button}
+      onPress={() => navigation}
+      >
+        <Text style={styles.textButton}>Sign-In</Text>
+      </Pressable>
+      </View>
    </SafeAreaView>
  );
 }

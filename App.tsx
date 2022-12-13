@@ -4,6 +4,7 @@ import React from 'react';
 import HomeScreen from './screens/HomeScreen';
 import ContactScreen from './screens/ContactScreen';
 import SignupScreen from './screens/SignupScreen';
+import ScanScreen from './screens/ScanScreen';
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -11,6 +12,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse'
 import { faAddressBook } from '@fortawesome/free-solid-svg-icons/faAddressBook'
+import { faQrcode} from '@fortawesome/free-solid-svg-icons/faQrcode'
 
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -29,6 +31,7 @@ export type StackParamList = {
 };
 export type BottomParamList = {
   Home: undefined;
+  Scan: undefined;
   Contact: undefined;
 };
 
@@ -46,11 +49,20 @@ const store = configureStore({
     serializableCheck: false }),
 });
 const persistor = persistStore(store);
-
+const customTabBarStyle = {
+  allowFontScaling: true,
+  labelStyle: { fontSize: 16, paddingTop: 5 },
+  tabStyle: { paddingTop: 5 },
+  style: { height: 60, borderTopColor: "#5F038A" },
+}
 const TabNavigator = () => {
   return (
     <Tab.Navigator
     screenOptions={({ route }) => ({
+      tabBarOptions: {
+        showLabel:false,
+        customTabBarStyle
+      },
       tabBarIcon: ({ color, size }) => {
         let iconName:IconDefinition|null = null;
 
@@ -58,6 +70,8 @@ const TabNavigator = () => {
           iconName = faAddressBook;
         } else if (route.name === "Home") {
           iconName = faHouse;
+        } else if (route.name === "Scan") {
+          iconName = faQrcode;
         }
 
         return !!iconName && <FontAwesomeIcon icon={iconName} size={size} color={color} />; 
@@ -67,7 +81,9 @@ const TabNavigator = () => {
       headerShown: false,
     })}
   >
-    <Tab.Screen name="Contact" component={ContactScreen} />
+    <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity',
+          }}/>
+    <Tab.Screen name="Scan" component={ScanScreen} />
     <Tab.Screen name="Home" component={HomeScreen} />
   </Tab.Navigator>  
   );
@@ -95,4 +111,11 @@ export default function App() {
   );
 }
 
+
+const styles = StyleSheet.create({
+ contact : {
+  height: 90,
+    width: 90,
+ },
+})
 
