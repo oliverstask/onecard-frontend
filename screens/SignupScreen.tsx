@@ -1,19 +1,26 @@
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackParamList } from '../App';
-import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, } from 'react-native';
-import React from 'react';
-import { useState } from 'react';
+import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import Modal from 'react-native-modal';
+
 
 export default function SignupScreen({
   route, navigation,
 }: NativeStackScreenProps<StackParamList, "Signup">) {
  
+
+  const [modalVisible, setModalVisible] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+  
+  const handleSignin = () => {
+    navigation.navigate('TabNavigator')
+    setModalVisible(false)
+  }
 
   return (
    <SafeAreaView style={styles.container}>
@@ -59,10 +66,28 @@ export default function SignupScreen({
       <Text>Already have an account ?</Text>
     <Pressable
       style={styles.button}
-      onPress={() => navigation}
+      onPress={() => {setModalVisible(true)}}
       >
         <Text style={styles.textButton}>Sign-In</Text>
       </Pressable>
+      </View>
+      <View>
+        <Modal
+          backdropOpacity={0.3}
+          isVisible={modalVisible}
+          onBackdropPress={() => setModalVisible(false)}
+          style={styles.contentView}
+        >
+          <View style={styles.content}>
+            <Text style={styles.contentTitle}>Welcome Back!</Text>
+            <Pressable 
+      style={styles.button}
+      onPress={() => handleSignin()}
+      >
+        <Text style={styles.textButton}>Sign-In</Text>
+      </Pressable>
+          </View>
+        </Modal>
       </View>
    </SafeAreaView>
  );
@@ -118,6 +143,22 @@ textAlign: "",
 textAlignVertical: 'top',
 letterSpacing: 0.1,
 */
+},
+content: {
+  backgroundColor: 'white',
+  padding: 22,
+  justifyContent: 'center',
+  alignItems: 'center',
+  borderTopRightRadius: 17,
+  borderTopLeftRadius: 17,
+},
+contentTitle: {
+  fontSize: 20,
+  marginBottom: 12,
+},
+contentView: {
+  justifyContent: 'flex-end',
+  margin: 0,
 },
 
 });
