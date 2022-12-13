@@ -88,9 +88,10 @@ const TabNavigator = () => {
     })}
   >
     <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Screen name="Scan" component={ScanScreen} />
     <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity',
           }}/>
-    <Tab.Screen name="Scan" component={ScanScreen} />
+    
     
   </Tab.Navigator>  
   );
