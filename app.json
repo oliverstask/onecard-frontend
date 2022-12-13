@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "frontend-native",
-    "slug": "frontend-native",
+    "name": "onecard",
+    "slug": "onecard",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,16 +18,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.djovap.onecard"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.djovap.onecard"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "107f7ec4-0cae-4954-ae1e-fb1c5fd3489e"
+      }
+    },
+    "owner": "djovap",
+    "scheme": "com.djovap.onecard"
   }
 }
