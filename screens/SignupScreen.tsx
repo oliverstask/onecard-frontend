@@ -1,15 +1,20 @@
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackParamList } from '../App';
-import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable } from 'react-native';
+import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, } from 'react-native';
 import React from 'react';
-
+import { useState } from 'react';
 
 export default function SignupScreen({
   route, navigation,
 }: NativeStackScreenProps<StackParamList, "Signup">) {
  
- 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
    <SafeAreaView style={styles.container}>
     <View style={styles.upDiv}>
@@ -17,18 +22,31 @@ export default function SignupScreen({
       <Text style={styles.welcome}>Welcome</Text>
     </View>
     <View>
+
       <TextInput
-      placeholder='FirstName' style={styles.textInput}>
+              onChangeText={(value : string)=> setFirstName(value)}
+              value={firstName}
+              placeholder='FirstName' style={styles.textInput}>
       </TextInput>
+
       <TextInput
-      placeholder='LastName'>
+              onChangeText={(value: string)=> setLastName(value)}
+              value={lastName}
+              placeholder='LastName'>
       </TextInput>
+
+      <TextInput 
+              onChangeText={(value: string)=> setEmail(value)}
+              value={email}
+              placeholder='Email'>
+      </TextInput>
+
       <TextInput
-      placeholder='Email'>
+              onChangeText={(value: string)=> setPassword(value)}
+              value={password}
+              placeholder='Password'>
       </TextInput>
-      <TextInput
-      placeholder='Password'>
-      </TextInput>
+
       <Pressable style={styles.button}>
         <Text style={styles.textButton}>Sign-Up</Text>
       </Pressable>
