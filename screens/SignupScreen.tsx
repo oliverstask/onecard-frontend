@@ -157,6 +157,18 @@ export default function SignupScreen({
         >
           <View style={styles.content}>
             <Text style={styles.contentTitle}>Welcome Back!</Text>
+            <TextInput
+                  onChangeText={(value: string)=> setEmail}
+                  value={email}
+                  placeholder='Email'>
+            </TextInput>
+
+            <TextInput
+                    onChangeText={(value: string)=> setPassword}
+                    value={password}
+                    placeholder='Password'>
+            </TextInput>
+            
             <Pressable 
       style={styles.button}
       onPress={() => handleSignin()}
