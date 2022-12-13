@@ -8,6 +8,9 @@ import SignupScreen from './screens/SignupScreen';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse'
+import { faAddressBook } from '@fortawesome/free-solid-svg-icons/faAddressBook'
 
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -16,7 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Provider } from 'react-redux';
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import user from './reducers/user';
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 
 export type StackParamList = {
@@ -49,15 +52,15 @@ const TabNavigator = () => {
     <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ color, size }) => {
-        let iconName = "";
+        let iconName:IconDefinition|null = null;
 
         if (route.name === "Contact") {
-          iconName = "address-book";
+          iconName = faAddressBook;
         } else if (route.name === "Home") {
-          iconName = "house";
+          iconName = faHouse;
         }
 
-        return <FontAwesome name={iconName} size={size} color={color} />; 
+        return !!iconName && <FontAwesomeIcon icon={iconName} size={size} color={color} />; 
       },
       tabBarActiveTintColor: "#5F038A",
       tabBarInactiveTintColor: "#b2b2b2",
