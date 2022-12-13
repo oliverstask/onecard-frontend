@@ -1,15 +1,10 @@
-
-import { Button, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React from "react";
+import { NativeBaseProvider, Box } from "native-base";
 
 export default function ContactScreen() {
- return (
-   <View>
-     <Text>Contact Screen</Text>
-     <Button
-       title="Go to Home"
-       
-     />
-   </View>
- );
+  return (
+    <NativeBaseProvider>
+      <Box>Hello world</Box>
+    </NativeBaseProvider>
+  );
 }
