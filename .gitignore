@@ -13,3 +13,5 @@ web-build/
 yarn.lock
 # macOS
 .DS_Store
+.yarn-integrity
+.lock-wscript
