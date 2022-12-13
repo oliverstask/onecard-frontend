@@ -5,6 +5,7 @@ import HomeScreen from './screens/HomeScreen';
 import ContactScreen from './screens/ContactScreen';
 import SignupScreen from './screens/SignupScreen';
 import ScanScreen from './screens/ScanScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -22,12 +23,17 @@ import { Provider } from 'react-redux';
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import user from './reducers/user';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import AppBar from './components/AppBar';
+import { NativeBaseProvider } from 'native-base';
+import { navigationRef } from './utils/RootNavigation';
+
 
 
 export type StackParamList = {
   Signup: undefined;
   TabNavigator: undefined;
   Home: undefined;
+  Profile: undefined;
 };
 export type BottomParamList = {
   Home: undefined;
@@ -81,10 +87,12 @@ const TabNavigator = () => {
       headerShown: false,
     })}
   >
+    <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Screen name="Scan" component={ScanScreen} />
     <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity',
           }}/>
-    <Tab.Screen name="Scan" component={ScanScreen} />
-    <Tab.Screen name="Home" component={HomeScreen} />
+    
+    
   </Tab.Navigator>  
   );
 };
@@ -94,7 +102,8 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <NavigationContainer>
+        <NativeBaseProvider>
+        <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName='Signup' screenOptions={{headerShown: false}}>
         <Stack.Screen
         name='Signup'
@@ -104,8 +113,13 @@ export default function App() {
         name='TabNavigator'
         component={TabNavigator}
         options={{headerShown: false}}/>
+        <Stack.Screen
+        name='Profile'
+        component={ProfileScreen}
+        options={{headerShown: false}}/>
         </Stack.Navigator>
        </NavigationContainer>
+       </NativeBaseProvider>
       </PersistGate>
     </Provider>
   );

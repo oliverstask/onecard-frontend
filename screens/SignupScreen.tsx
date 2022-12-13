@@ -2,9 +2,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackParamList } from '../App';
 import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-native-modal';
-
+import * as Google from 'expo-auth-session/providers/google'
+import * as Facebook from 'expo-auth-session/providers/facebook'
+import { ResponseType } from 'expo-auth-session'
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export default function SignupScreen({
   route, navigation,
@@ -22,6 +25,80 @@ export default function SignupScreen({
     setModalVisible(false)
   }
 
+  const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
+    expoClientId: '191632874108-c17crjeh8t75495rji8c3dasp2cfvc47.apps.googleusercontent.com',
+  })
+  const fbToken = 'EAAIFEpnUDJABAHzBQvUrtXfP6lbEZALMO4ZA0Bd4PRaWxgPaV89MjAoFBIBRmZBh3hBylOoHMnZCZCCogPG8k0ZAjLDE0sVHzzhywPgoS9fNtfYtQVOZCC0uhrhDjRruC8nbcWnBG7KqatgXCxs44U11eNZArfJuoTKQlsOGvHsrpWZCEyWYaXkIl50r0a9EtZAKReSD9utBogx93y1WK5j0pfZAWx5GFGtmVfd0wzgVNnJ1kiuhSWfwwqR'
+  const [fbRequest, fbResponse, fbPromptAsync] = Facebook.useAuthRequest({
+    clientId: '568527401782416',
+    responseType: ResponseType.Code
+  })
+
+  const googleUserInfo = async (token: string | undefined) => {
+    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    return await response.json()
+  }
+
+  const facebookUserInfo = async (token: string) => {
+    const response = await fetch(
+      `https://graph.facebook.com/v15.0/me?fields=email%2Cfirst_name%2Clast_name&access_token=${token}`
+    );
+    return await response.json()
+  }
+ 
+
+  useEffect(()=> {
+    (async()=>{
+      if (googleResponse?.type === 'success'){
+        const { authentication } = googleResponse
+        const accessToken = authentication?.accessToken
+        const user = await googleUserInfo(accessToken)
+        
+      fetch('http://localhost:3000/auth/socialsignin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+		      body: JSON.stringify({ 
+            firstName: user.given_name,
+            lastName: user.family_name,
+            email: user.email
+          })
+        }).then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
+        }
+      })()
+  },[googleResponse])
+
+  useEffect(()=> {
+    (async()=> {
+      if (fbResponse?.type === "success") {
+        const { code } = fbResponse.params
+        const user = await facebookUserInfo(fbToken)
+        console.log(user)
+        fetch('http://localhost:3000/auth/socialsignin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+		      body: JSON.stringify({ 
+            firstName: user.given_name,
+            lastName: user.family_name,
+            email: user.email
+          })
+        }).then(response => response.json())
+        .then(data => {
+          console.log(data)
+        })
+      }
+    })()
+  }, [fbResponse])
+   
   return (
    <SafeAreaView style={styles.container}>
     <View style={styles.upDiv}>
@@ -101,6 +178,19 @@ export default function SignupScreen({
           </View>
         </Modal>
       </View>
+
+    <View style={styles.socialContainer}>
+      <Text>or login with..</Text>
+     <View style={styles.socialLogin}>
+      <Pressable onPress={()=> googlePromptAsync()}>
+        <FontAwesome name='google' size={35} color='#0F2E3A'/>
+      </Pressable>
+      <Pressable onPress={()=> fbPromptAsync()}>
+        <FontAwesome name='facebook' size={35} color='#0F2E3A'/>
+      </Pressable>
+      
+     </View>
+    </View>
    </SafeAreaView>
  );
 }
@@ -134,11 +224,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
-textInput :{
- backgroundColor: "rgba(245,245,245,1)",
- width: 235,
- height: 40,
- borderRadius: 5,
+  textInput :{
+  backgroundColor: "rgba(245,245,245,1)",
+  width: 235,
+  height: 40,
+  borderRadius: 5,
 
  /*shadowColor: "#000",
 shadowOffset: {
@@ -172,5 +262,14 @@ contentView: {
   justifyContent: 'flex-end',
   margin: 0,
 },
+socialLogin: {
+  flexDirection: 'row',
+  justifyContent: 'space-around',
+  width: "50%",
+  marginTop: 20
+},
+socialContainer: {
+  alignItems: 'center'
+}
 
 });
