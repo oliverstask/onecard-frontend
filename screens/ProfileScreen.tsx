@@ -1,9 +1,13 @@
 import AppBar from '../components/AppBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackParamList } from '../App';
-import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, ScrollView } from 'react-native';
+import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, ScrollView,} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../components/CustomInput';
+import { Switch, HStack, Center, NativeBaseProvider } from "native-base";
+import ToggleSwitch from 'toggle-switch-react-native'
+import { FunctionSetInputValue } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
+import { useSelector } from 'react-redux';
 
  function ProfileScreen() {
     
@@ -16,83 +20,59 @@ import CustomInput from '../components/CustomInput';
     const [linkedin, setLinkedin] = useState('');
     const [website, setWebsite] = useState('');
     const [custom, setCustom] = useState('');
+    const [isSwitchOn, setIsSwitchOn] = useState(false);
+    
 
-    const customData: any = []
+      
+    const customData:any[] = []
+//     const customData: any = useSelector(state, "ProfileInputs")
 
     const deleteCustom = (name:string) => {
 // ecrire fonction delete ici
     }
 
-    const customDisplay = customData.map((e:any) => <CustomInput value={e.url} name={e.name} icon={e.icon} color={e.color} enabled={false} onDelete={(name:string) => deleteCustom(name)} />)
+    const customDisplay = customData.map((e:any) => <CustomInput name={e.name} color={e.color} icon={e.icon} value={e.value} isCustom onDelete={handleDeleteCustomItem} />)
 
+    const handleDeleteCustomItem = (name:string) => {
+       // Gérer l'effacement
+       // useDispatch(deleteCustomItem(name))
+    }
 
 return (
   
        <SafeAreaView>
+              
         <AppBar screenName='Profile' />
-     <Text>Home Screen</Text>
-     <Button
-       title="Go to Contact"
-       />
         <ScrollView>
-        <View>
-        <Text style={styles.title}>Required infos</Text>
-        </View>
-        <View>
+        <NativeBaseProvider >
+           <View>
+              <Text style={styles.title}>Required infos</Text>
+           </View>
+               <View style={styles.profile}>
 
-        <TextInput
-              onChangeText={(value : string)=> setFirstName(value)}
-              value={firstName}
-              placeholder='FirstName' style={styles.textInput}>
-       </TextInput>
+                
+                 <CustomInput isRequired name='' color='' icon='' value='' placeholder='Fisrt name' onChange={(value) => setFirstName(value)} />
+                 <CustomInput isRequired name='' color='' icon='' value='' placeholder='Last name' onChange={(value) => setLastName(value)} />
+                 <CustomInput isRequired name='' color='' icon='' value='' placeholder='Email' onChange={(value) => setEmail(value)} />
 
-       <TextInput
-              onChangeText={(value: string)=> setLastName(value)}
-              value={lastName}
-              placeholder='LastName'>
-      </TextInput>
+               </View>
 
-      <TextInput 
-              onChangeText={(value: string)=> setEmail(value)}
-              value={email}
-              placeholder='Email'>
-      </TextInput>
-        </View>
+              <View>
+                      <Text style={styles.title}>Add to profile</Text>
+              </View>
 
-        <View>
-        <Text style={styles.title}>Add to profile</Text>
-        </View>
+        <View >
+              <View style={styles.profile}>
 
-        <View>
-        <TextInput
-              onChangeText={(value : string)=> setPhone(value)}
-              value={phone}
-              placeholder='Phone' style={styles.textInput}>
-       </TextInput>
+              <CustomInput name='' color='' icon='' value='' placeholder='Phone' onChange={(value) => setPhone(value)} />
+              <CustomInput name='' color='' icon='' value='' placeholder='Company name' onChange={(value) => setCompanyName(value)} />
+              <CustomInput name='' color='' icon='' value='' placeholder='Adress' onChange={(value) => setAdress(value)} />
+              <CustomInput name='' color='' icon='' value='' placeholder='LikedIn' onChange={(value) => setLinkedin(value)} />
+              <CustomInput name='' color='' icon='' value='' placeholder='Website' onChange={(value) => setWebsite(value)} />
+               </View>
 
-       <TextInput
-              onChangeText={(value : string)=> setCompanyName(value)}
-              value={companyName}
-              placeholder='Company name' style={styles.textInput}>
-       </TextInput>
-
-       <TextInput
-              onChangeText={(value : string)=> setAdress(value)}
-              value={adress}
-              placeholder='Address' style={styles.textInput}>
-       </TextInput>
-
-       <TextInput
-              onChangeText={(value : string)=> setLinkedin(value)}
-              value={linkedin}
-              placeholder='Linkedin account' style={styles.textInput}>
-       </TextInput>
-
-       <TextInput
-              onChangeText={(value : string)=> setWebsite(value)}
-              value={website}
-              placeholder='Website' style={styles.textInput}>
-       </TextInput>
+        
+       
         </View>
 
         <View>
@@ -105,8 +85,12 @@ return (
        }
         </View>
         <View>
+        <CustomInput name='' color='' icon='' value='' isCustom placeholder='Website' onChange={(value) => setWebsite(value)} onDelete={handleDeleteCustomItem} />
+ 
         {customDisplay}
+        
         </View>
+        </NativeBaseProvider>
         </ScrollView>
         
        </SafeAreaView>
@@ -117,11 +101,11 @@ return (
 const styles = StyleSheet.create({
 
 textInput :{
-    backgroundColor: "rgba(245,245,245,1)",
+    backgroundColor: "",
     width: 235,
     height: 40,
     borderRadius: 5,
-   
+    marginBottom: 15
     /*shadowColor: "#000",
    shadowOffset: {
        width: 0,
@@ -140,6 +124,15 @@ textInput :{
    },
 
    title : {
+
+   },
+   required: {
+       flex: 1,
+
+   },
+   profile: {
+       flex: 1,
+       flexDirection: 'column'
 
    }
 })
