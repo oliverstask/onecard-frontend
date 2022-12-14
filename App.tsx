@@ -6,6 +6,7 @@ import ContactScreen from './screens/ContactScreen';
 import SignupScreen from './screens/SignupScreen';
 import ScanScreen from './screens/ScanScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import MapScreen from './screens/MapScreen';
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -33,12 +34,13 @@ export type StackParamList = {
   Signup: undefined;
   TabNavigator: undefined;
   Home: undefined;
-  Profile: undefined;
 };
 export type BottomParamList = {
   Home: undefined;
   Scan: undefined;
   Contact: undefined;
+  Profile: undefined;
+  Map: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -67,7 +69,7 @@ const TabNavigator = () => {
     screenOptions={({ route }) => ({
       tabBarOptions: {
         showLabel:false,
-        customTabBarStyle
+        customTabBarStyle,
       },
       tabBarIcon: ({ color, size }) => {
         let iconName:IconDefinition|null = null;
@@ -89,8 +91,9 @@ const TabNavigator = () => {
   >
     <Tab.Screen name="Home" component={HomeScreen} />
     <Tab.Screen name="Scan" component={ScanScreen} />
-    <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity',
-          }}/>
+    <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity'}}/>
+    <Tab.Screen name='Profile' component={ProfileScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}} />
+    <Tab.Screen name='Map' component={MapScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}}/>
     
     
   </Tab.Navigator>  
@@ -113,10 +116,7 @@ export default function App() {
         name='TabNavigator'
         component={TabNavigator}
         options={{headerShown: false}}/>
-        <Stack.Screen
-        name='Profile'
-        component={ProfileScreen}
-        options={{headerShown: false}}/>
+        
         </Stack.Navigator>
        </NavigationContainer>
        </NativeBaseProvider>
