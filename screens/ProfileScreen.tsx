@@ -27,9 +27,10 @@ import CustomInput from '../components/CustomInput';
 
 
 return (
-  
+     <>
+     <AppBar screenName='Profile' />
        <SafeAreaView>
-        <AppBar screenName='Profile' />
+        
      <Text>Home Screen</Text>
      <Button
        title="Go to Contact"
@@ -110,6 +111,7 @@ return (
         </ScrollView>
         
        </SafeAreaView>
+       </>
 )
 }
 

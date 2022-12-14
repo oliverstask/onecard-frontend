@@ -89,7 +89,7 @@ const TabNavigator = () => {
       headerShown: false,
     })}
   >
-    <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Screen name="Home" component={HomeScreen}/>
     <Tab.Screen name="Scan" component={ScanScreen} />
     <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity'}}/>
     <Tab.Screen name='Profile' component={ProfileScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}} />

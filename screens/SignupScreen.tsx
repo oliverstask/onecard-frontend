@@ -8,6 +8,8 @@ import * as Google from 'expo-auth-session/providers/google'
 import * as Facebook from 'expo-auth-session/providers/facebook'
 import { ResponseType } from 'expo-auth-session'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { MaterialIcons } from "@expo/vector-icons";
+import { VStack, HStack, IconButton, Icon, NativeBaseProvider, Center, Box, StatusBar} from "native-base";
 
 export default function SignupScreen({
   route, navigation,
@@ -139,10 +141,22 @@ export default function SignupScreen({
         <Text style={styles.textButton}>Sign-Up</Text>
       </Pressable>
     </View>
-    <View>
-      <Text>Already have an account ?</Text>
+    <View style={styles.upDiv}>
+      <Text style={styles.textalready}>or login with..</Text>
+     <View style={styles.socialLogin}>
+      <Pressable onPress={()=> googlePromptAsync()}>
+        <FontAwesome name='google' size={35} color='#0F2E3A'/>
+      </Pressable>
+      <Pressable onPress={()=> fbPromptAsync()}>
+        <Icon as={MaterialIcons} name="facebook" size={35} color="#0F2E3A"/>
+      </Pressable>
+      
+     </View>
+    </View>
+    <View style={styles.upDiv}>
+      <Text style={styles.textalready}>Already have an account ?</Text>
     <Pressable
-      style={styles.button}
+      style={styles.buttonIn}
       onPress={() => {setModalVisible(true)}}
       >
         <Text style={styles.textButton}>Sign-In</Text>
@@ -157,6 +171,7 @@ export default function SignupScreen({
         >
           <View style={styles.content}>
             <Text style={styles.contentTitle}>Welcome Back!</Text>
+            
             <TextInput
                   onChangeText={(value: string)=> setEmail}
                   value={email}
@@ -168,7 +183,7 @@ export default function SignupScreen({
                     value={password}
                     placeholder='Password'>
             </TextInput>
-            
+           
             <Pressable 
       style={styles.button}
       onPress={() => handleSignin()}
@@ -179,18 +194,7 @@ export default function SignupScreen({
         </Modal>
       </View>
 
-    <View style={styles.socialContainer}>
-      <Text>or login with..</Text>
-     <View style={styles.socialLogin}>
-      <Pressable onPress={()=> googlePromptAsync()}>
-        <FontAwesome name='google' size={35} color='#0F2E3A'/>
-      </Pressable>
-      <Pressable onPress={()=> fbPromptAsync()}>
-        <FontAwesome name='facebook' size={35} color='#0F2E3A'/>
-      </Pressable>
-      
-     </View>
-    </View>
+    
    </SafeAreaView>
  );
 }
@@ -213,12 +217,23 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     paddingTop: 8,
-    width: '100%',
-    marginTop: 30,
-    backgroundColor: '#fbe29c',
-    borderRadius: 1,
+    marginTop: 20,
+    width: 235,
+    height: 40,
+    backgroundColor: '#5F038A',
+    borderRadius: 5,
+  },
+  buttonIn: {
+    alignItems: 'center',
+    paddingTop: 8,
+    marginTop: 20,
+    width: 235,
+    height: 40,
+    backgroundColor:'#285D73',
+    borderRadius: 5,
   },
   textButton: {
+    color: 'white',
     fontFamily: 'Futura',
     height: 30,
     fontWeight: '600',
@@ -229,22 +244,6 @@ const styles = StyleSheet.create({
   width: 235,
   height: 40,
   borderRadius: 5,
-
- /*shadowColor: "#000",
-shadowOffset: {
-	width: 0,
-	height: 2,
-},
-shadowOpacity: 0.10,
-shadowRadius: 5,
-fontFamily: "Inter",
-fontWeight: '400',
-fontSize: 12,
-color: "rgba(120,143,153,1",
-textAlign: "",
-textAlignVertical: 'top',
-letterSpacing: 0.1,
-*/
 },
 content: {
   backgroundColor: 'white',
@@ -256,20 +255,25 @@ content: {
 },
 contentTitle: {
   fontSize: 20,
-  marginBottom: 12,
+  marginBottom: 100,
 },
 contentView: {
   justifyContent: 'flex-end',
   margin: 0,
+
 },
 socialLogin: {
   flexDirection: 'row',
   justifyContent: 'space-around',
-  width: "50%",
-  marginTop: 20
+  width: "25%",
+  marginTop: 20,
+  marginLeft: 7
 },
 socialContainer: {
   alignItems: 'center'
-}
-
+},
+textalready: {
+  fontSize: 14,
+  color: "#788F99"
+  }
 });
