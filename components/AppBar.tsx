@@ -14,7 +14,7 @@ export default function AppBar({screenName}:{screenName:string}) {
   
       <StatusBar backgroundColor="#3700B3" barStyle="light-content" />
       <Box safeAreaTop bg="fffff" />
-      <HStack bg="white" px="1" py="3" justifyContent="space-between" alignItems="center" width={"100%"} maxW="380">
+      <HStack bg="white" px="1" py="3" justifyContent="space-between" alignItems="center" width={"100%"} maxW="400" >
         <HStack alignItems="center">
           <Text color="black" fontFamily="Futura-Medium"  fontSize="30">
             {screenName}
@@ -22,8 +22,9 @@ export default function AppBar({screenName}:{screenName:string}) {
         </HStack>
         <HStack>
         
-       <IconButton icon={<Icon as={MaterialIcons} name="person" size="8" color="black"/>} onPress={() => RootNavigation.navigate('Profile')} />
+       <IconButton icon={<Icon as={MaterialIcons} name="person" size="10" color="#0F2E3A"/>} onPress={() => RootNavigation.navigate('Profile')} />
       
+    
       
 
         

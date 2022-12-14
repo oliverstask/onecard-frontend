@@ -39,10 +39,9 @@ import { useSelector } from 'react-redux';
     }
 
 return (
-  
+     <>
+     <AppBar screenName='Profile' />
        <SafeAreaView>
-              
-        <AppBar screenName='Profile' />
         <ScrollView>
         <NativeBaseProvider >
            <View>
@@ -94,6 +93,7 @@ return (
         </ScrollView>
         
        </SafeAreaView>
+       </>
 )
 }
 

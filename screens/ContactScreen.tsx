@@ -18,7 +18,7 @@ export default function ContactScreen() {
        style={styles.button}
       onPress={() => RootNavigation.navigate('Map')}
       >
-      <IconButton icon={<Icon as={MaterialIcons} name="person" size="xs" color="white"/>} onPress={() => RootNavigation.navigate('Profile')} />
+      <IconButton icon={<Icon as={MaterialIcons} name="location-pin" size="4" color="white"/>}/>
       <Text style={styles.textButton}>Map</Text>
     </Pressable>
   </SafeAreaView>
@@ -35,8 +35,9 @@ container: {
   
   },
 button: {
-  alignItems: 'center',
-  position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'absolute',
     width: 90,
     height: 30,
     left: 274,
@@ -57,6 +58,6 @@ textButton: {
   fontWeight: '600',
   fontSize: 16,
   color: 'white',
-  
+  paddingTop: 3
 },
 })
