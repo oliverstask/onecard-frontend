@@ -7,9 +7,11 @@ import CustomInput from '../components/CustomInput';
 import { Switch, HStack, Center, NativeBaseProvider } from "native-base";
 import ToggleSwitch from 'toggle-switch-react-native'
 import { FunctionSetInputValue } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAdress,  updateLinkedin, updateWebsite, UserState} from "../reducers/user"
+ 
 
- function ProfileScreen() {
+function ProfileScreen() {
     
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -22,7 +24,8 @@ import { useSelector } from 'react-redux';
     const [custom, setCustom] = useState('');
     const [isSwitchOn, setIsSwitchOn] = useState(false);
     
-
+    const dispatch = useDispatch();
+    const user = useSelector<{user:UserState}, UserState>((state) => state.user);
       
     const customData:any[] = []
 //     const customData: any = useSelector(state, "ProfileInputs")
@@ -38,6 +41,31 @@ import { useSelector } from 'react-redux';
        // useDispatch(deleteCustomItem(name))
     }
 
+    const handlePhoneChange = (value:string) => {
+        setPhone(value)
+        dispatch(updatePhone(value))
+    } 
+
+    const handleCompanyNameChange = (value:string) => {
+        setCompanyName(value)
+        dispatch(updateCompanyName(value))
+    }
+    
+    const handleAdressChange = (value:string) => {
+        setAdress(value)
+        dispatch(updateAdress(value))
+    }
+
+    const handleLinkedinChange = (value:string) => {
+        setLinkedin(value)
+        dispatch(updateLinkedin(value))
+    }
+
+    const handleWebsite = (value:string) => {
+        setWebsite(value)
+        dispatch(updateWebsite(value))
+    }
+
 return (
      <>
      <AppBar screenName='Profile' />
@@ -50,9 +78,9 @@ return (
                <View style={styles.profile}>
 
                 
-                 <CustomInput isRequired name='' color='' icon='' value='' placeholder='Fisrt name' onChange={(value) => setFirstName(value)} />
-                 <CustomInput isRequired name='' color='' icon='' value='' placeholder='Last name' onChange={(value) => setLastName(value)} />
-                 <CustomInput isRequired name='' color='' icon='' value='' placeholder='Email' onChange={(value) => setEmail(value)} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.firstName} placeholder='Fisrt name' onBlur={(value) => setFirstName(value)} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.lastName} placeholder='Last name' onBlur={(value) => setLastName(value)} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.email} placeholder='Email' onBlur={(value) => setEmail(value)} />
 
                </View>
 
@@ -63,11 +91,11 @@ return (
         <View >
               <View style={styles.profile}>
 
-              <CustomInput name='' color='' icon='' value='' placeholder='Phone' onChange={(value) => setPhone(value)} />
-              <CustomInput name='' color='' icon='' value='' placeholder='Company name' onChange={(value) => setCompanyName(value)} />
-              <CustomInput name='' color='' icon='' value='' placeholder='Adress' onChange={(value) => setAdress(value)} />
-              <CustomInput name='' color='' icon='' value='' placeholder='LikedIn' onChange={(value) => setLinkedin(value)} />
-              <CustomInput name='' color='' icon='' value='' placeholder='Website' onChange={(value) => setWebsite(value)} />
+              <CustomInput name='' color='' icon='' value={user.phone ? user.phone: ''} placeholder='Phone' onBlur={(value) => handlePhoneChange(value)} />
+              <CustomInput name='' color='' icon='' value={user.companyName ? user.companyName: ''} placeholder='Company name' onBlur={(value) => handleCompanyNameChange(value)} />
+              <CustomInput name='' color='' icon='' value={user.adress ? user.adress: ''} placeholder='Adress' onBlur={(value) => handleAdressChange(value)} />
+              <CustomInput name='' color='' icon='' value={user.linkedin ? user.linkedin: ''} placeholder='LikedIn' onBlur={(value) => handleLinkedinChange(value)} />
+              <CustomInput name='' color='' icon='' value={user.website ? user.website: ''} placeholder='Website' onBlur={(value) => handleWebsite (value)} />
                </View>
 
         
@@ -84,7 +112,7 @@ return (
        }
         </View>
         <View>
-        <CustomInput name='' color='' icon='' value='' isCustom placeholder='Website' onChange={(value) => setWebsite(value)} onDelete={handleDeleteCustomItem} />
+        {/* <CustomInput name='' color='' icon='' value='' isCustom placeholder='Website' onBlur={(value) => setWebsite(value)} onDelete={handleDeleteCustomItem} /> */}
  
         {customDisplay}
         
