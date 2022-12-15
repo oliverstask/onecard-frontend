@@ -9,7 +9,8 @@ import * as Facebook from 'expo-auth-session/providers/facebook'
 import { ResponseType } from 'expo-auth-session'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { MaterialIcons } from "@expo/vector-icons";
-import { VStack, HStack, IconButton, Icon, NativeBaseProvider, Center, Box, StatusBar} from "native-base";
+import { Icon, Input, Stack,} from "native-base";
+
 
 export default function SignupScreen({
   route, navigation,
@@ -21,7 +22,8 @@ export default function SignupScreen({
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
+  const [show, setShow] = React.useState(false);
+
   const handleSignin = () => {
     navigation.navigate('TabNavigator')
     setModalVisible(false)
@@ -55,7 +57,7 @@ export default function SignupScreen({
     return await response.json()
   }
  
-
+ 
   useEffect(()=> {
     (async()=>{
       if (googleResponse?.type === 'success'){
@@ -100,6 +102,8 @@ export default function SignupScreen({
       }
     })()
   }, [fbResponse])
+
+
    
   return (
    <SafeAreaView style={styles.container}>
@@ -107,31 +111,44 @@ export default function SignupScreen({
       <Image source={require('../assets/LogoPNG.png')} ></Image>
       <Text style={styles.welcome}>Welcome</Text>
     </View>
-    <View>
+    <Stack space={4} w="100%" alignItems="center">
 
-      <TextInput
-              onChangeText={(value : string)=> setFirstName(value)}
-              value={firstName}
-              placeholder='FirstName' style={styles.textInput}>
-      </TextInput>
+      <Input 
+      InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="5" color="muted.400" />} 
+      onChangeText={(value : string)=> setFirstName(value)}
+      style={styles.textInput}
+      w={{
+      base: "75%",
+      md: "25%"
+    }} placeholder="Name" backgroundColor='rgba(245,245,245,1)'/>
 
-      <TextInput
-              onChangeText={(value: string)=> setLastName(value)}
-              value={lastName}
-              placeholder='LastName'>
-      </TextInput>
+      <Input 
+      InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="5" color="muted.400" />} 
+      onChangeText={(value: string)=> setLastName(value)}
+      style={styles.textInput}
+      w={{
+      base: "75%",
+      md: "25%"
+    }} placeholder="Lastname" backgroundColor='rgba(245,245,245,1)'/>
 
-      <TextInput 
-              onChangeText={(value: string)=> setEmail(value)}
-              value={email}
-              placeholder='Email'>
-      </TextInput>
+      <Input 
+      InputLeftElement={<Icon as={<MaterialIcons name="alternate-email" />} size={5} ml="5" color="muted.400" />} 
+      onChangeText={(value: string)=> setEmail(value)}
+      style={styles.textInput}
+      w={{
+      base: "75%",
+      md: "25%"
+    }} placeholder="Email" backgroundColor='rgba(245,245,245,1)'/>
 
-      <TextInput
-              onChangeText={(value: string)=> setPassword(value)}
-              value={password}
-              placeholder='Password'>
-      </TextInput>
+      <Input 
+      onChangeText={(value: string)=> setPassword(value)}
+      style={styles.textInput}
+      w={{
+      base: "75%",
+      md: "25%"
+    }} type={show ? "text" : "password"} InputRightElement={<Pressable onPress={() => setShow(!show)}>
+          <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
+          </Pressable>} placeholder="Password" />
 
       <Pressable 
       style={styles.button}
@@ -140,7 +157,7 @@ export default function SignupScreen({
 
         <Text style={styles.textButton}>Sign-Up</Text>
       </Pressable>
-    </View>
+    </Stack>
     <View style={styles.upDiv}>
       <Text style={styles.textalready}>or login with..</Text>
      <View style={styles.socialLogin}>
@@ -170,19 +187,29 @@ export default function SignupScreen({
           style={styles.contentView}
         >
           <View style={styles.content}>
+          <Stack space={4} w="100%" alignItems="center">
             <Text style={styles.contentTitle}>Welcome Back!</Text>
             
-            <TextInput
-                  onChangeText={(value: string)=> setEmail}
-                  value={email}
-                  placeholder='Email'>
-            </TextInput>
-
-            <TextInput
-                    onChangeText={(value: string)=> setPassword}
-                    value={password}
-                    placeholder='Password'>
-            </TextInput>
+            <Input 
+              InputLeftElement={<Icon as={<MaterialIcons name="alternate-email" />} size={5} ml="5" color="muted.400" />} 
+              onChangeText={(value: string)=> setEmail(value)}
+              style={styles.textInput}
+              w={{
+              base: "75%",
+              md: "25%"
+              }} 
+              placeholder="Email" backgroundColor='rgba(245,245,245,1)'/>
+            
+            <Input 
+              onChangeText={(value: string)=> setPassword(value)}
+              style={styles.textInput}
+              w={{
+              base: "75%",
+              md: "25%"
+              }} 
+              type={show ? "text" : "password"} InputRightElement={<Pressable onPress={() => setShow(!show)}>
+                 <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
+                 </Pressable>} placeholder="Password" backgroundColor='rgba(245,245,245,1)'/>
            
             <Pressable 
       style={styles.button}
@@ -190,6 +217,7 @@ export default function SignupScreen({
       >
         <Text style={styles.textButton}>Sign-In</Text>
       </Pressable>
+      </Stack>
           </View>
         </Modal>
       </View>
@@ -241,7 +269,7 @@ const styles = StyleSheet.create({
   },
   textInput :{
   backgroundColor: "rgba(245,245,245,1)",
-  width: 235,
+  width: 300,
   height: 40,
   borderRadius: 5,
 },
@@ -254,8 +282,9 @@ content: {
   borderTopLeftRadius: 17,
 },
 contentTitle: {
-  fontSize: 20,
-  marginBottom: 100,
+  fontSize: 30,
+  marginBottom: 50,
+  fontFamily:'Futura-Medium'
 },
 contentView: {
   justifyContent: 'flex-end',

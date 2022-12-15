@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHouse } from '@fortawesome/free-solid-svg-icons/faHouse'
 import { faAddressBook } from '@fortawesome/free-solid-svg-icons/faAddressBook'
 import { faQrcode} from '@fortawesome/free-solid-svg-icons/faQrcode'
+import { MaterialIcons } from "@expo/vector-icons";
 
 import { persistStore, persistReducer } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -25,7 +26,7 @@ import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/
 import user from './reducers/user';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import AppBar from './components/AppBar';
-import { NativeBaseProvider } from 'native-base';
+import { Icon, IconButton, NativeBaseProvider } from 'native-base';
 import { navigationRef } from './utils/RootNavigation';
 
 
@@ -42,6 +43,7 @@ export type BottomParamList = {
   Profile: undefined;
   Map: undefined;
 };
+
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator<BottomParamList>();
@@ -71,7 +73,7 @@ const TabNavigator = () => {
         showLabel:false,
         customTabBarStyle,
       },
-      tabBarIcon: ({ color, size }) => {
+      tabBarIcon: ({ color, size}) => {
         let iconName:IconDefinition|null = null;
 
         if (route.name === "Contact") {
@@ -79,7 +81,7 @@ const TabNavigator = () => {
         } else if (route.name === "Home") {
           iconName = faHouse;
         } else if (route.name === "Scan") {
-          iconName = faQrcode;
+          
         }
 
         return !!iconName && <FontAwesomeIcon icon={iconName} size={size} color={color} />; 
@@ -90,7 +92,25 @@ const TabNavigator = () => {
     })}
   >
     <Tab.Screen name="Home" component={HomeScreen}/>
-    <Tab.Screen name="Scan" component={ScanScreen} />
+    <Tab.Screen name="Scan" component={ScanScreen} 
+    options={{tabBarLabel:'',
+      tabBarIcon:({ color, size}) => <Icon as={MaterialIcons} name="qr-code-scanner" size="50" color="white"/>,
+      tabBarIconStyle:{
+        alignItems: 'center',
+        justifyContent: 'center',
+        bottom: 10,
+        width:80,
+        top:5,
+    }, 
+    tabBarItemStyle:{
+        backgroundColor: '#5F038A',
+        maxWidth:80,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius:40,
+        bottom: 30,
+        height:80,
+    }}} />
     <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity'}}/>
     <Tab.Screen name='Profile' component={ProfileScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}} />
     <Tab.Screen name='Map' component={MapScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}}/>
