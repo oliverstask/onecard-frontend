@@ -5,7 +5,6 @@ import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressab
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../components/CustomInput';
 import { Switch, HStack, Center, NativeBaseProvider } from "native-base";
-import ToggleSwitch from 'toggle-switch-react-native'
 import { FunctionSetInputValue } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAdress,  updateLinkedin, updateWebsite, UserState} from "../reducers/user"
