@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, ScrollView } from 'react-native';
+import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, ScrollView, NativeSyntheticEvent, TextInputEndEditingEventData } from 'react-native';
 import ProfileScreen from "../screens/ProfileScreen";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { Switch, HStack, Center, NativeBaseProvider } from "native-base";
@@ -19,9 +19,10 @@ type CustomInputProps = {
     onChange?:(value:string)=>void,
     onSwitch?:(status:boolean)=>void,
     onDelete?:(name:string)=>void,
+    onBlur?:(value:string)=>void
 }
      
-function CustomInput ({name, color, icon,value, placeholder, keyboardType = "default" , isRequired = false, isActive = false, isCustom = false, onChange, onSwitch, onDelete}:CustomInputProps){
+function CustomInput ({name, color, icon,value, placeholder, keyboardType = "default" , isRequired = false, isActive = false, isCustom = false, onChange, onSwitch, onDelete, onBlur}:CustomInputProps){
 
     const [inputValue, setInputValue] = useState<string>(value)
 
@@ -31,7 +32,7 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
 
     const handleTextChange = (value:string) => {
         setInputValue(value)
-        onChange && onChange(value)
+        onBlur && onBlur(value)
     }
    
     const handleDelete = (name:string) => {
@@ -44,7 +45,7 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
             { !isRequired && <Switch size="sm" onValueChange={(e) => handleSwitchToggle(e)} /> }
             {
                 !isCustom &&
-                    <TextInput placeholder={placeholder} value={inputValue} onChangeText={(v) => handleTextChange(v)} keyboardType={keyboardType} style={styles.textInput}/>
+                    <TextInput placeholder={placeholder} value={inputValue} onChangeText={(e:any) => setInputValue(e)} onEndEditing={(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => handleTextChange(e.nativeEvent.text)} keyboardType={keyboardType} style={styles.textInput}/>
             }
             { isCustom &&
                 <Text>
