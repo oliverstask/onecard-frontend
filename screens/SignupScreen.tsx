@@ -11,8 +11,9 @@ import { ResponseType } from 'expo-auth-session'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { MaterialIcons } from "@expo/vector-icons";
 import { Icon, Input, Stack, Spinner } from "native-base";
-
-
+import { useDispatch, useSelector } from 'react-redux';
+import { storeUserAuthInfos, AuthState } from '../reducers/auth'
+import user from '../reducers/user';
 export default function SignupScreen({
   route, navigation,
 }: NativeStackScreenProps<StackParamList, "Signup">) {
@@ -32,6 +33,9 @@ export default function SignupScreen({
   
   const [isLoading, setIsLoading] = useState(false)
   
+  const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
+  const dispatch = useDispatch()
+
 
   const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
     expoClientId: '191632874108-c17crjeh8t75495rji8c3dasp2cfvc47.apps.googleusercontent.com',
@@ -61,6 +65,10 @@ export default function SignupScreen({
     return await response.json()
   }
   
+useEffect(()=> {
+  userToken && navigation.navigate('TabNavigator')
+}, [])
+
   useEffect(()=> {
     (async()=>{
       if (googleResponse?.type === 'success'){
@@ -140,6 +148,7 @@ export default function SignupScreen({
         const data = await fetchData.json()
         console.log(data)
         if (data?.result){
+          dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
           navigation.navigate('TabNavigator')
           setModalVisible(false)
           setIsLoading(false)
@@ -209,7 +218,7 @@ export default function SignupScreen({
       >
 
         <Text style={styles.textButton}>Sign-Up</Text>
-        {isLoading && <Spinner color='white'/>}
+        {isLoading && <Spinner color='white' style={{marginBottom: 6}}/>}
       </Pressable>
         {signUpMessage && <Text>{signUpMessage}</Text>}
     </Stack>
@@ -273,7 +282,7 @@ export default function SignupScreen({
       onPress={() => handleSignin()}
       >
         <Text style={styles.textButton}>Sign-In</Text>
-        {isLoading && <Spinner color='white'/>}
+        {isLoading && <Spinner color='white' style={{marginBottom: 6}}/>}
       </Pressable>
       </Stack>
           </View>
@@ -297,7 +306,7 @@ const styles = StyleSheet.create({
     
   },
   welcome : {
-    fontFamily : 'Futura-Medium',
+    fontFamily : 'Futura',
     fontSize: 45,
   },
   button: {
@@ -344,7 +353,7 @@ content: {
 contentTitle: {
   fontSize: 30,
   marginBottom: 50,
-  fontFamily:'Futura-Medium'
+  fontFamily:'Futura'
 },
 contentView: {
   justifyContent: 'flex-end',
