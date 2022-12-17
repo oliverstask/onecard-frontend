@@ -2,8 +2,9 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, ScrollView, NativeSyntheticEvent, TextInputEndEditingEventData } from 'react-native';
 import ProfileScreen from "../screens/ProfileScreen";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { Switch, HStack, Center, NativeBaseProvider } from "native-base";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { MaterialIcons } from "@expo/vector-icons";
+import { Switch, HStack, Center, NativeBaseProvider, Input, Box, Icon } from "native-base";
 import { faTimes, height} from '@fortawesome/free-solid-svg-icons/faTimes'
 
 type CustomInputProps = {
@@ -42,11 +43,11 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
     return (
         <>
         <HStack style={styles.stack}>
-            { !isRequired && <Switch size="sm" onValueChange={(e) => handleSwitchToggle(e)} /> }
+            { !isRequired && <Switch size="sm" onThumbColor="white" onTrackColor="rgba(18, 53, 67, 0.69)" onValueChange={(e) => handleSwitchToggle(e)} /> }
             {
                 !isCustom &&
-                    <TextInput placeholder={placeholder} value={inputValue} onChangeText={(e:any) => setInputValue(e)} onEndEditing={(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => handleTextChange(e.nativeEvent.text)} keyboardType={keyboardType} style={styles.textInput}/>
-            }
+                    <Input mx="3" w="70%"placeholder={placeholder} value={inputValue} onChangeText={(e:any) => setInputValue(e)} onEndEditing={(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => handleTextChange(e.nativeEvent.text)} keyboardType={keyboardType} style={styles.textInput}/>
+            }     
             { isCustom &&
                 <Text>
                     {value}
@@ -54,7 +55,8 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
             }
             { isCustom && 
             <Pressable onPress={()=>handleDelete(name)}>
-                <FontAwesomeIcon icon={faTimes} /> 
+                <Icon as={MaterialIcons} name="delete" size="6" color="rgba(18, 53, 67, 0.69)" top='0' left='1'/>
+             
             </Pressable>
             }
         </HStack>
