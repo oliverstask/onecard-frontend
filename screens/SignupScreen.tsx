@@ -7,6 +7,7 @@ import Modal from 'react-native-modal';
 import * as Google from 'expo-auth-session/providers/google'
 import * as Facebook from 'expo-auth-session/providers/facebook'
 import { ResponseType } from 'expo-auth-session'
+// @ts-ignore
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { MaterialIcons } from "@expo/vector-icons";
 import { Icon, Input, Stack, Spinner } from "native-base";
