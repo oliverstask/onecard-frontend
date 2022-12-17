@@ -24,11 +24,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Provider } from 'react-redux';
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import user from './reducers/user';
+import auth from './reducers/auth';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import AppBar from './components/AppBar';
 import { Icon, IconButton, NativeBaseProvider } from 'native-base';
 import { navigationRef } from './utils/RootNavigation';
-
+import { useFonts } from 'expo-font'
 
 
 export type StackParamList = {
@@ -48,7 +49,7 @@ export type BottomParamList = {
 const Stack = createNativeStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator<BottomParamList>();
 
-const reducers = combineReducers({user});
+const reducers = combineReducers({user, auth});
 const persistConfig = {
   key: 'oneCard', 
   storage: AsyncStorage
@@ -92,6 +93,7 @@ const TabNavigator = () => {
     })}
   >
     <Tab.Screen name="Home" component={HomeScreen}/>
+    {/* @ts-ignore */}
     <Tab.Screen name="Scan" component={ScanScreen} 
     options={{tabBarLabel:'',
       tabBarIcon:({ color, size}) => <Icon as={MaterialIcons} name="qr-code-scanner" size="50" color="white"/>,
@@ -122,6 +124,13 @@ const TabNavigator = () => {
 
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    'Futura': require('./assets/fonts/Futura-Medium.otf')
+  })
+
+  if (!fontsLoaded) {
+    return null;
+  }
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>

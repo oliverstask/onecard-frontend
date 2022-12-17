@@ -1,7 +1,7 @@
 import AppBar from '../components/AppBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackParamList } from '../App';
-import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, ScrollView, AsyncStorage,} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable,  AsyncStorage,} from 'react-native';
 
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../components/CustomInput';
@@ -35,9 +35,9 @@ function ProfileScreen() {
     const user = useSelector<{user:UserState}, UserState>((state) => state.user);
      console.log(user)
     const customData:any[] = []
-
+    console.log(user)
 //     const customData: any = useSelector(state, "ProfileInputs")
-
+    
     const deleteCustom = (name:string) => {
 // ecrire fonction delete ici
     }
