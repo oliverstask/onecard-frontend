@@ -1,6 +1,6 @@
 import AppBar from '../components/AppBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { StackParamList } from '../App';
+import { BottomParamList, StackParamList } from '../App';
 import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable,  AsyncStorage,} from 'react-native';
 
 import React, { useState, useEffect } from 'react';
@@ -10,10 +10,12 @@ import { Switch, HStack, Center, NativeBaseProvider, Divider, Box, Icon, ScrollV
 import { FunctionSetInputValue } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, UserState, SettingObject, ArrObject} from "../reducers/user"
+import { logout, AuthState } from '../reducers/auth'
+import { resetSettings } from '../reducers/user'
 
  
 
-function ProfileScreen() {
+function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -30,12 +32,14 @@ function ProfileScreen() {
     const [websiteSwitch, setWebsiteSwitch] = useState<boolean>(false);
     const [custom, setCustom] = useState<ArrObject[]>([]);
     const [showModal, setShowModal] = useState(false);
+    const [logoutState, setLogoutState] = useState(false)
 
     const dispatch = useDispatch();
     const user = useSelector<{user:UserState}, UserState>((state) => state.user);
-     console.log(user)
+    const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
+    
     const customData:any[] = []
-    console.log(user)
+    // console.log(user)
 //     const customData: any = useSelector(state, "ProfileInputs")
     
     const deleteCustom = (name:string) => {
@@ -43,6 +47,17 @@ function ProfileScreen() {
     }
 
     const customDisplay = customData.map((e:any) => <CustomInput name={e.name} color={e.color} icon={e.icon} value={e.value} isCustom onDelete={handleDeleteCustomItem} />)
+
+    useEffect(()=> {
+        if (!userToken){
+            console.log('logout...')
+            navigation.navigate('Signup')
+        }
+    }, [logoutState])
+
+useEffect(()=> {
+    console.log(user)
+},[])
 
     const handleDeleteCustomItem = (name:string) => {
        // Gérer l'effacement
@@ -97,6 +112,12 @@ function ProfileScreen() {
                 dispatch(updateWebsite({value:website, switchOn:value}))
             break;
         }
+    }
+
+    const handleLogout = () => {
+        dispatch(logout())
+        dispatch(resetSettings())
+        setLogoutState(!logoutState)
     }
 
 return (
@@ -195,7 +216,9 @@ return (
         </View>
         </NativeBaseProvider>
         
-        
+        <Pressable onPress={()=>handleLogout()} style={{marginBottom: 20}}>
+            <Text>Logout</Text>
+        </Pressable>
        </SafeAreaView>
        </ScrollView>
        </>

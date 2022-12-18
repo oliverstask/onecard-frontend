@@ -43,6 +43,7 @@ export type BottomParamList = {
   Contact: undefined;
   Profile: undefined;
   Map: undefined;
+  Signup: undefined;
 };
 
 
@@ -125,7 +126,8 @@ const TabNavigator = () => {
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    'Futura': require('./assets/fonts/Futura-Medium.otf')
+    'Futura': require('./assets/fonts/Futura-Medium.otf'),
+    'Futura-Medium': require('./assets/fonts/Futura-Medium.otf')
   })
 
   if (!fontsLoaded) {
