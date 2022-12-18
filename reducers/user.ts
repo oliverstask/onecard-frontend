@@ -19,7 +19,7 @@ export type UserState = {
 };
 export type ArrObject = {
   name: string,
-  value: string | null,
+  value: string ,
   switchOn: boolean,
 }
 
@@ -53,6 +53,20 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
+    resetSettings: (state) => {
+      state = initialState   
+    },
+    settingsInfos: (state, action) => {
+      const { firstName, lastName, email, phoneNumber, companyName, address, linkedin, website } = action.payload
+      state.firstName = firstName
+      state.lastName = lastName
+      state.email = email
+      state.phone.value = phoneNumber
+      state.companyName.value = companyName
+      state.address.value = address
+      state.linkedin.value = linkedin
+      state.website.value = website
+    },
     updateFisrtName: (state, action: PayloadAction<string>) => {
       state.firstName = action.payload;
     },
@@ -96,5 +110,5 @@ export const userSlice = createSlice({
 
 
   
-export const { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, addCustom, removeCustom, updateCustom  } = userSlice.actions;
+export const { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, addCustom, removeCustom, updateCustom, settingsInfos, resetSettings  } = userSlice.actions;
 export default userSlice.reducer;

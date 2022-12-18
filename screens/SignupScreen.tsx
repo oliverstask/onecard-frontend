@@ -12,8 +12,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { MaterialIcons } from "@expo/vector-icons";
 import { Icon, Input, Stack, Spinner } from "native-base";
 import { useDispatch, useSelector } from 'react-redux';
+import { settingsInfos, UserState } from '../reducers/user';
 import { storeUserAuthInfos, AuthState } from '../reducers/auth'
 import user from '../reducers/user';
+import { useRawData } from '@shopify/react-native-skia';
 export default function SignupScreen({
   route, navigation,
 }: NativeStackScreenProps<StackParamList, "Signup">) {
@@ -33,7 +35,9 @@ export default function SignupScreen({
   
   const [isLoading, setIsLoading] = useState(false)
   
+ 
   const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
+  const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
   const dispatch = useDispatch()
 
 
@@ -65,9 +69,15 @@ export default function SignupScreen({
     return await response.json()
   }
   
-useEffect(()=> {
-  userToken && navigation.navigate('TabNavigator')
-}, [])
+  useEffect(()=> {
+    if (userToken) {
+     return navigation.navigate('TabNavigator')
+    }
+    return
+  }, [])
+
+  
+
 
   useEffect(()=> {
     (async()=>{
@@ -75,7 +85,7 @@ useEffect(()=> {
         const { authentication } = googleResponse
         const accessToken = authentication?.accessToken
         const user = await googleUserInfo(accessToken)
-        console.log(user)
+        navigation.navigate('TabNavigator')
         const fetchData = await fetch('https://onecard-backend.vercel.app/auth/socialLogin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -86,7 +96,8 @@ useEffect(()=> {
           })
         })
         const data = await fetchData.json()
-        console.log(data)
+        dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+        storeUserSettingsInfos(data.userId)
         }
       })()
   },[googleResponse])
@@ -107,12 +118,23 @@ useEffect(()=> {
           })
         })
         const data = await fetchData.json()
-        console.log(data)
+        dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+        storeUserSettingsInfos(data.userId)
       }
     })()
   }, [fbResponse])
    
- 
+  const storeUserSettingsInfos = async(id: string) => {
+    const response = await fetch(`https://onecard-backend.vercel.app/settings/${id}`)
+    const userData = await response.json()
+    const { firstName, lastName, email } = userData.user
+    const { phoneNumber, companyName, address, linkedin, website } = userData.user.userSettings
+    dispatch(settingsInfos({firstName, lastName, email, phoneNumber, companyName, address, linkedin, website}))
+    console.log(firstName, lastName, email, phoneNumber, companyName, address, linkedin, website)
+  }
+
+
+
   const handleSignup = async () => {
     setIsLoading(true)
     const fetchData = await fetch('https://onecard-backend.vercel.app/auth/signup', {
@@ -126,8 +148,10 @@ useEffect(()=> {
       })
     })
     const data = await fetchData.json()
-    console.log(data)
+    
     if (data?.result){
+      dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+      storeUserSettingsInfos(data.userId)
       navigation.navigate('TabNavigator')
       setIsLoading(false)
     } else {
@@ -146,18 +170,21 @@ useEffect(()=> {
 		      body: JSON.stringify({ email: signinEmail, password: signinPassword })
         })
         const data = await fetchData.json()
-        console.log(data)
+        // console.log(data)
         if (data?.result){
           dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+          storeUserSettingsInfos(data.userId)
           navigation.navigate('TabNavigator')
           setModalVisible(false)
           setIsLoading(false)
+          
         } else {
           console.log(data.message)
           console.log(signinEmail, signinPassword)
           setSignInMessage(data.message)
           setIsLoading(false)
         }
+        
   }
 
   const openModal = () => {
