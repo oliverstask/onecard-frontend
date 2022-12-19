@@ -1,7 +1,9 @@
 import AppBar from '../components/AppBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { BottomParamList, StackParamList } from '../App';
 import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable,  AsyncStorage,} from 'react-native';
+
 
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../components/CustomInput';
@@ -9,9 +11,11 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Switch, HStack, Center, NativeBaseProvider, Divider, Box, Icon, ScrollView, Button, Modal, FormControl, Input, TextArea,} from "native-base";
 import { FunctionSetInputValue } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, UserState, SettingObject, ArrObject} from "../reducers/user"
+
+import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, UserState, SettingObject, ArrObject, addCustom} from "../reducers/user"
 import { logout, AuthState } from '../reducers/auth'
 import { resetSettings } from '../reducers/user'
+
 
  
 
@@ -32,21 +36,31 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     const [websiteSwitch, setWebsiteSwitch] = useState<boolean>(false);
     const [custom, setCustom] = useState<ArrObject[]>([]);
     const [showModal, setShowModal] = useState(false);
+
+    const [name, setName] = useState('');
+    const [infos, setInfos]= useState('');
     const [logoutState, setLogoutState] = useState(false)
 
     const dispatch = useDispatch();
+
+
     const user = useSelector<{user:UserState}, UserState>((state) => state.user);
+
+    const customData = useSelector<{user:UserState}, ArrObject[]>((state)=> state.user.customArr);
+
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
     
     const customData:any[] = []
     // console.log(user)
+
 //     const customData: any = useSelector(state, "ProfileInputs")
     
     const deleteCustom = (name:string) => {
 // ecrire fonction delete ici
     }
-
-    const customDisplay = customData.map((e:any) => <CustomInput name={e.name} color={e.color} icon={e.icon} value={e.value} isCustom onDelete={handleDeleteCustomItem} />)
+// console.log(customData)
+const customDisplay = ''
+    // const customDisplay = customData.map((e:any) => <CustomInput name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={handleDeleteCustomItem} />)
 
     useEffect(()=> {
         if (!userToken){
@@ -114,10 +128,16 @@ useEffect(()=> {
         }
     }
 
+
+    const handleCustom = () => {
+        dispatch(addCustom({name, infos, switchOn:false}))
+        setShowModal(false);
+
     const handleLogout = () => {
         dispatch(logout())
         dispatch(resetSettings())
         setLogoutState(!logoutState)
+
     }
 
 return (
@@ -172,23 +192,19 @@ return (
           <Modal.Body>
             <FormControl>
               <FormControl.Label>Field name</FormControl.Label>
-              <Input />
+              <Input onChangeText={(value) => setName(value)}/>
             </FormControl>
             <FormControl mt="3">
               <FormControl.Label>Infos</FormControl.Label>
-              <TextArea h={20} w="100%" maxW="300" autoCompleteType={undefined} />
+              <TextArea h={20} w="100%" maxW="300" autoCompleteType={undefined} onChangeText={(value) => setInfos(value)}/>
             </FormControl>
           </Modal.Body>
           <Modal.Footer>
             <Button.Group space={2}>
-              <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-              setShowModal(false);
-            }}>
+              <Button variant="ghost" colorScheme="blueGray" onPress={() => {setShowModal(false);}} >
                 Cancel
               </Button>
-              <Button backgroundColor="rgba(18, 53, 67, 0.75)" onPress={() => {
-              setShowModal(false);
-            }}>
+              <Button backgroundColor="rgba(18, 53, 67, 0.75)" onPress={() => handleCustom()}>
                 Save
               </Button>
             </Button.Group>
@@ -209,7 +225,7 @@ return (
         <View>
 
 
-         <CustomInput name='' color='' icon='' value='' isCustom placeholder='Website' onBlur={(value) => setWebsite(value)} onDelete={handleDeleteCustomItem} /> 
+         {/* <CustomInput name='' color='' icon='' value='' isCustom placeholder='Website' onBlur={(value) => setWebsite(value)} onDelete={handleDeleteCustomItem} />  */}
  
         {customDisplay}
         
