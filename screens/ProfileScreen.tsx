@@ -51,7 +51,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
 
 
 
-    const user = useSelector<{ user: UserState }, UserState>((state) => state.user);
+    
 
     const customData = useSelector<{ user: UserState }, ArrObject[]>((state) => state.user.customArr);
 
