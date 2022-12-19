@@ -26,8 +26,10 @@ type CustomInputProps = {
 function CustomInput ({name, color, icon,value, placeholder, keyboardType = "default" , isRequired = false, isActive = false, isCustom = false, onChange, onSwitch, onDelete, onBlur}:CustomInputProps){
 
     const [inputValue, setInputValue] = useState<string>(value)
+    const [isChecked, setIsChecked] = useState<boolean>(isActive)
 
     const handleSwitchToggle = (status:boolean) => {
+        setIsChecked(!isChecked)
         onSwitch && onSwitch(status)
     }
 
@@ -43,7 +45,7 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
     return (
         <>
         <HStack style={styles.stack}>
-            { !isRequired && <Switch size="sm" onThumbColor="white" onTrackColor="rgba(18, 53, 67, 0.69)" onValueChange={(e) => handleSwitchToggle(e)} /> }
+            { !isRequired && <Switch size="sm" onThumbColor="white" onTrackColor="rgba(18, 53, 67, 0.69)" isChecked={isChecked} onValueChange={(e) => handleSwitchToggle(e)} /> }
             {
                 !isCustom &&
                     <Input mx="3" w="70%"placeholder={placeholder} value={inputValue} onChangeText={(e:any) => setInputValue(e)} onEndEditing={(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => handleTextChange(e.nativeEvent.text)} keyboardType={keyboardType} style={styles.textInput}/>
@@ -54,10 +56,7 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
                 </Text>
             }
             { isCustom && 
-            <Pressable onPress={()=>handleDelete(name)}>
-                <Icon as={MaterialIcons} name="delete" size="6" color="rgba(18, 53, 67, 0.69)" top='0' left='1'/>
-             
-            </Pressable>
+                <Icon as={MaterialIcons} onPress={()=>handleDelete(name)} name="delete" size={8} color="rgba(18, 53, 67, 0.69)" top='0' left='1'/>
             }
         </HStack>
         </>
