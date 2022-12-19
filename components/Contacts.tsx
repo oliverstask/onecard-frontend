@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, TouchableOpacity, View } from 'react-native';
 import { NativeBaseProvider, Box, Text, Pressable, Heading, IconButton, Icon, HStack, Avatar, VStack, Spacer, Center, ScrollView} from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { MaterialIcons, Ionicons, Entypo } from '@expo/vector-icons';
+import { useSelector } from 'react-redux'
+import { AuthState } from '../reducers/auth'
+
 
 export default function Contact() {
+
     const data = [{
       id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
       fullName: 'Afreen Khan',
@@ -39,7 +43,10 @@ export default function Contact() {
     const [listData, setListData] = useState(data);
     const [open, setOpen] = useState(false)
   
-   
+     
+    
+    
+
     const closeRow = (rowMap, rowKey) => {
       if (rowMap[rowKey]) {
         rowMap[rowKey].closeRow();

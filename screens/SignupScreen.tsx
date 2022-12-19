@@ -2,32 +2,44 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { StackParamList } from '../App';
 import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Modal from 'react-native-modal';
 import * as Google from 'expo-auth-session/providers/google'
 import * as Facebook from 'expo-auth-session/providers/facebook'
 import { ResponseType } from 'expo-auth-session'
+// @ts-ignore
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { MaterialIcons } from "@expo/vector-icons";
-import { Icon, Input, Stack,} from "native-base";
-
-
+import { Icon, Input, Stack, Spinner } from "native-base";
+import { useDispatch, useSelector } from 'react-redux';
+import { settingsInfos, UserState } from '../reducers/user';
+import { storeUserAuthInfos, AuthState } from '../reducers/auth'
+import user from '../reducers/user';
+import { useRawData } from '@shopify/react-native-skia';
 export default function SignupScreen({
   route, navigation,
 }: NativeStackScreenProps<StackParamList, "Signup">) {
  
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [show, setShow] = React.useState(false);
+  const [signupFirstName, setSignupFirstName] = useState('');
+  const [signupLastName, setSignupLastName] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [signinEmail, setSigninEmail] = useState('');
+  const [signinPassword, setSigninPassword] = useState('');
+  const [show, setShow] = useState(false);
+  
+  const [signUpMessage, setSignUpMessage ] = useState('')
+  const [signInMessage, setSignInMessage ] = useState('')
+  
+  const [isLoading, setIsLoading] = useState(false)
+  
+ 
+  const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
+  const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
+  const dispatch = useDispatch()
 
-  const handleSignin = () => {
-    navigation.navigate('TabNavigator')
-    setModalVisible(false)
-  }
 
   const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
     expoClientId: '191632874108-c17crjeh8t75495rji8c3dasp2cfvc47.apps.googleusercontent.com',
@@ -56,16 +68,25 @@ export default function SignupScreen({
     );
     return await response.json()
   }
- 
- 
+  
+  useEffect(()=> {
+    if (userToken) {
+     return navigation.navigate('TabNavigator')
+    }
+    return
+  }, [])
+
+  
+
+
   useEffect(()=> {
     (async()=>{
       if (googleResponse?.type === 'success'){
         const { authentication } = googleResponse
         const accessToken = authentication?.accessToken
         const user = await googleUserInfo(accessToken)
-        
-      fetch('http://localhost:3000/auth/socialsignin', {
+        navigation.navigate('TabNavigator')
+        const fetchData = await fetch('https://onecard-backend.vercel.app/auth/socialLogin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
 		      body: JSON.stringify({ 
@@ -73,10 +94,10 @@ export default function SignupScreen({
             lastName: user.family_name,
             email: user.email
           })
-        }).then(response => response.json())
-        .then(data => {
-          console.log(data)
         })
+        const data = await fetchData.json()
+        dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+        storeUserSettingsInfos(data.userId)
         }
       })()
   },[googleResponse])
@@ -87,7 +108,7 @@ export default function SignupScreen({
         const { code } = fbResponse.params
         const user = await facebookUserInfo(fbToken)
         console.log(user)
-        fetch('http://localhost:3000/auth/socialsignin', {
+        const fetchData = await fetch('https://onecard-backend.vercel.app/auth/socialLogin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
 		      body: JSON.stringify({ 
@@ -95,13 +116,81 @@ export default function SignupScreen({
             lastName: user.family_name,
             email: user.email
           })
-        }).then(response => response.json())
-        .then(data => {
-          console.log(data)
         })
+        const data = await fetchData.json()
+        dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+        storeUserSettingsInfos(data.userId)
       }
     })()
   }, [fbResponse])
+   
+  const storeUserSettingsInfos = async(id: string) => {
+    const response = await fetch(`https://onecard-backend.vercel.app/settings/${id}`)
+    const userData = await response.json()
+    const { firstName, lastName, email } = userData.user
+    const { phoneNumber, companyName, address, linkedin, website } = userData.user.userSettings
+    dispatch(settingsInfos({firstName, lastName, email, phoneNumber, companyName, address, linkedin, website}))
+    console.log(firstName, lastName, email, phoneNumber, companyName, address, linkedin, website)
+  }
+
+
+
+  const handleSignup = async () => {
+    setIsLoading(true)
+    const fetchData = await fetch('https://onecard-backend.vercel.app/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        firstName: signupFirstName, 
+        lastName: signupLastName, 
+        email: signupEmail, 
+        password: signupPassword, 
+      })
+    })
+    const data = await fetchData.json()
+    
+    if (data?.result){
+      dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+      storeUserSettingsInfos(data.userId)
+      navigation.navigate('TabNavigator')
+      setIsLoading(false)
+    } else {
+      console.log(data.message)
+      setSignUpMessage(data.message)
+      setIsLoading(false)
+    }
+
+  }
+
+  const handleSignin = async () => {
+    setIsLoading(true)
+    const fetchData = await fetch('https://onecard-backend.vercel.app/auth/signin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+		      body: JSON.stringify({ email: signinEmail, password: signinPassword })
+        })
+        const data = await fetchData.json()
+        // console.log(data)
+        if (data?.result){
+          dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+          storeUserSettingsInfos(data.userId)
+          navigation.navigate('TabNavigator')
+          setModalVisible(false)
+          setIsLoading(false)
+          
+        } else {
+          console.log(data.message)
+          console.log(signinEmail, signinPassword)
+          setSignInMessage(data.message)
+          setIsLoading(false)
+        }
+        
+  }
+
+  const openModal = () => {
+    setSignInMessage('')
+    setModalVisible(true)
+  }
 
 
    
@@ -115,7 +204,7 @@ export default function SignupScreen({
 
       <Input 
       InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="5" color="muted.400" />} 
-      onChangeText={(value : string)=> setFirstName(value)}
+      onChangeText={(value : string)=> setSignupFirstName(value)}
       style={styles.textInput}
       w={{
       base: "75%",
@@ -124,7 +213,7 @@ export default function SignupScreen({
 
       <Input 
       InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="5" color="muted.400" />} 
-      onChangeText={(value: string)=> setLastName(value)}
+      onChangeText={(value: string)=> setSignupLastName(value)}
       style={styles.textInput}
       w={{
       base: "75%",
@@ -133,7 +222,7 @@ export default function SignupScreen({
 
       <Input 
       InputLeftElement={<Icon as={<MaterialIcons name="alternate-email" />} size={5} ml="5" color="muted.400" />} 
-      onChangeText={(value: string)=> setEmail(value)}
+      onChangeText={(value: string)=> setSignupEmail(value)}
       style={styles.textInput}
       w={{
       base: "75%",
@@ -141,7 +230,7 @@ export default function SignupScreen({
     }} placeholder="Email" backgroundColor='rgba(245,245,245,1)'/>
 
       <Input 
-      onChangeText={(value: string)=> setPassword(value)}
+      onChangeText={(value: string)=> setSignupPassword(value)}
       style={styles.textInput}
       w={{
       base: "75%",
@@ -152,11 +241,13 @@ export default function SignupScreen({
 
       <Pressable 
       style={styles.button}
-      onPress={() => navigation.navigate('TabNavigator')}
+      onPress={() => handleSignup()}
       >
 
         <Text style={styles.textButton}>Sign-Up</Text>
+        {isLoading && <Spinner color='white' style={{marginBottom: 6}}/>}
       </Pressable>
+        {signUpMessage && <Text>{signUpMessage}</Text>}
     </Stack>
     <View style={styles.upDiv}>
       <Text style={styles.textalready}>or login with..</Text>
@@ -174,7 +265,7 @@ export default function SignupScreen({
       <Text style={styles.textalready}>Already have an account ?</Text>
     <Pressable
       style={styles.buttonIn}
-      onPress={() => {setModalVisible(true)}}
+      onPress={() => {openModal()}}
       >
         <Text style={styles.textButton}>Sign-In</Text>
       </Pressable>
@@ -192,16 +283,17 @@ export default function SignupScreen({
             
             <Input 
               InputLeftElement={<Icon as={<MaterialIcons name="alternate-email" />} size={5} ml="5" color="muted.400" />} 
-              onChangeText={(value: string)=> setEmail(value)}
+              onChangeText={(value: string)=> setSigninEmail(value)}
               style={styles.textInput}
               w={{
               base: "75%",
               md: "25%"
               }} 
-              placeholder="Email" backgroundColor='rgba(245,245,245,1)'/>
+              placeholder="Email" backgroundColor='rgba(245,245,245,1)'
+              />
             
             <Input 
-              onChangeText={(value: string)=> setPassword(value)}
+              onChangeText={(value: string)=> setSigninPassword(value)}
               style={styles.textInput}
               w={{
               base: "75%",
@@ -210,12 +302,14 @@ export default function SignupScreen({
               type={show ? "text" : "password"} InputRightElement={<Pressable onPress={() => setShow(!show)}>
                  <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
                  </Pressable>} placeholder="Password" backgroundColor='rgba(245,245,245,1)'/>
-           
+            {signInMessage && <Text>{signInMessage}</Text>}
+            
             <Pressable 
       style={styles.button}
       onPress={() => handleSignin()}
       >
         <Text style={styles.textButton}>Sign-In</Text>
+        {isLoading && <Spinner color='white' style={{marginBottom: 6}}/>}
       </Pressable>
       </Stack>
           </View>
@@ -239,11 +333,12 @@ const styles = StyleSheet.create({
     
   },
   welcome : {
-    fontFamily : 'Futura-Medium',
+    fontFamily : 'Futura',
     fontSize: 45,
   },
   button: {
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
     paddingTop: 8,
     marginTop: 20,
     width: 235,
@@ -253,6 +348,7 @@ const styles = StyleSheet.create({
   },
   buttonIn: {
     alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: 8,
     marginTop: 20,
     width: 235,
@@ -284,7 +380,7 @@ content: {
 contentTitle: {
   fontSize: 30,
   marginBottom: 50,
-  fontFamily:'Futura-Medium'
+  fontFamily:'Futura'
 },
 contentView: {
   justifyContent: 'flex-end',

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NativeBaseProvider, Box,Text, IconButton, Icon, View, ScrollView, Modal, Button, Radio} from "native-base";
 import * as RootNavigation from '../utils/RootNavigation'
 import AppBar from "../components/AppBar";
@@ -8,6 +8,8 @@ import { Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import Contact from "../components/Contacts";
 import { BlurView} from "expo-blur";
+import { useSelector } from 'react-redux'
+import { AuthState } from '../reducers/auth'
 
 export default function ContactScreen() {
 
@@ -15,6 +17,22 @@ export default function ContactScreen() {
   const [value, setValue] = useState("one");
   
  
+    const fetchContactList = async() => {
+      const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
+      const response = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+      const contactInfos = await response.json()
+      //console.log(userId)
+      const dataArr = contactInfos.contacts.map((e:any, i:any)=> {
+        const {firstName, lastName} = e.userId
+        const {qrName} = e.qrId
+        const fullName = [firstName, lastName].join(' ')
+        return {id: i, fullName, recentText: qrName, avatarUrl: 'testurl'}
+
+      })
+      console.log(dataArr)
+    }
+ 
+    fetchContactList()
 
 
   return (
