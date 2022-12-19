@@ -46,17 +46,34 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     const [infos, setInfos] = useState('');
     const [logoutState, setLogoutState] = useState(false)
 
+    const userId= useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
     const dispatch = useDispatch();
+    
+    const fetchUpdatedData = async (
+            isRequired:'required'|'userSettings',
+            field:'firstName'|'lastName'|'email'|'phoneNumber'|'address'|'companyName'|'website'|'linkedin'|'whatsApp'|'twitter'|'instagram'|'facebook'|'tiktok'|'resume',
+            value:string
+        ) => {
+            console.log('----UPDATING---', field)
 
+        const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${isRequired}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+             userId, 
+             valueToUpdate: field, 
+             newValue: value
+            })
+          })
+          const data = await fetchData.json()
+          console.log(data)
 
-
+    }
 
     
-
     const customData = useSelector<{ user: UserState }, ArrObject[]>((state) => state.user.customArr);
 
   
-
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
     
     //const customData:any[] = []
@@ -86,29 +103,39 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
 
     }
 
-    const handleOptionnalFieldChange = (value: string, type: 'phone' | 'companyName' | 'address' | 'linkedIn' | 'website') => {
+    const handleFieldChange = (value: string, isRequired:'required'|'userSettings', type: 'firstName'|'lastName'|'email'|'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website') => {
         switch (type) {
+            case 'firstName':
+                setFirstName(value)
+                break;
+            case 'lastName':
+                setLastName(value);
+                break;
+            case 'email':
+                setEmail(value);
+                break;
             case 'address':
                 setAddress(value)
-                dispatch(updateAddress({ value, switchOn: addressSwitch }))
+                dispatch(updateAddress({ value, switchOn: addressSwitch }));
                 break;
             case 'companyName':
                 setCompanyName(value)
-                dispatch(updateCompanyName({ value, switchOn: companyNameSwitch }))
+                dispatch(updateCompanyName({ value, switchOn: companyNameSwitch }));
                 break;
-            case 'linkedIn':
+            case 'linkedin':
                 setLinkedin(value)
-                dispatch(updateLinkedin({ value, switchOn: linkedinSwitch }))
+                dispatch(updateLinkedin({ value, switchOn: linkedinSwitch }));
                 break;
-            case 'phone':
+            case 'phoneNumber':
                 setPhone(value)
-                dispatch(updatePhone({ value, switchOn: phoneSwitch }))
+                dispatch(updatePhone({ value, switchOn: phoneSwitch }));
                 break;
             case 'website':
                 setWebsite(value)
-                dispatch(updateWebsite({ value, switchOn: websiteSwitch }))
+                dispatch(updateWebsite({ value, switchOn: websiteSwitch }));
                 break;
         }
+        fetchUpdatedData(isRequired, type, value)
     }
 
     const handleOptionnalFieldSwitch = (value: boolean, type: 'phone' | 'companyName' | 'address' | 'linkedIn' | 'website') => {
@@ -166,9 +193,9 @@ return (
                <View style={styles.profileR}>
                 
                 
-                 <CustomInput isRequired name='' color='' icon='' value={user.firstName} placeholder='Fisrt name' onBlur={(value) => setFirstName(value)} />
-                 <CustomInput isRequired name='' color='' icon='' value={user.lastName} placeholder='Last name' onBlur={(value) => setLastName(value)} />
-                 <CustomInput isRequired name='' color='' icon='' value={user.email} placeholder='Email' onBlur={(value) => setEmail(value)} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.firstName} placeholder='Fisrt name' onBlur={(value) => fetchUpdatedData('required','firstName', firstName )} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.lastName} placeholder='Last name' onBlur={(value) => fetchUpdatedData('required', 'lastName', lastName)} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.email} placeholder='Email' onBlur={(value) => fetchUpdatedData('required', 'email', email)} />
                 
                  
       
@@ -182,11 +209,11 @@ return (
         <View >
               <View style={styles.profile}>
 
-              <CustomInput name='' color='' icon='' isActive={user.phone.switchOn} value={user.phone.value ? user.phone.value : ''} placeholder='Phone' onBlur={(value) => handleOptionnalFieldChange(value,'phone')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'phone')} />
-              <CustomInput name='' color='' icon='' isActive={user.companyName.switchOn} value={user.companyName.value ? user.companyName.value: ''} placeholder='Company name' onBlur={(value) => handleOptionnalFieldChange(value,'companyName')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'companyName')} />
-              <CustomInput name='' color='' icon='' isActive={user.address.switchOn} value={user.address.value ? user.address.value: ''} placeholder='Address' onBlur={(value) => handleOptionnalFieldChange(value,'address')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'address')}/>
-              <CustomInput name='' color='' icon='' isActive={user.linkedin.switchOn} value={user.linkedin.value ? user.linkedin.value: ''} placeholder='LinkedIn' onBlur={(value) => handleOptionnalFieldChange(value,'linkedIn')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'linkedIn')} />
-              <CustomInput name='' color='' icon='' isActive={user.website.switchOn} value={user.website.value ? user.website.value: ''} placeholder='Website' onBlur={(value) => handleOptionnalFieldChange (value,'website')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'website')}/>
+              <CustomInput name='' color='' icon='' isActive={user.phone.switchOn} value={user.phone.value ? user.phone.value : ''} placeholder='Phone' onBlur={(value) => handleFieldChange(value,'userSettings','phoneNumber')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'phone')} />
+              <CustomInput name='' color='' icon='' isActive={user.companyName.switchOn} value={user.companyName.value ? user.companyName.value: ''} placeholder='Company name' onBlur={(value) => handleFieldChange(value,'userSettings','companyName')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'companyName')} />
+              <CustomInput name='' color='' icon='' isActive={user.address.switchOn} value={user.address.value ? user.address.value: ''} placeholder='Address' onBlur={(value) => handleFieldChange(value,'userSettings','address')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'address')}/>
+              <CustomInput name='' color='' icon='' isActive={user.linkedin.switchOn} value={user.linkedin.value ? user.linkedin.value: ''} placeholder='LinkedIn' onBlur={(value) => handleFieldChange(value,'userSettings','linkedin')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'linkedIn')} />
+              <CustomInput name='' color='' icon='' isActive={user.website.switchOn} value={user.website.value ? user.website.value: ''} placeholder='Website' onBlur={(value) => handleFieldChange (value,'userSettings','website')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'website')}/>
                </View>
 
         
