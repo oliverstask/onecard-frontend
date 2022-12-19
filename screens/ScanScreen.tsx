@@ -7,10 +7,12 @@ import * as RootNavigation from '../utils/RootNavigation'
 import { useSelector } from 'react-redux'
 import { AuthState } from '../reducers/auth'
 import { latest } from 'immer/dist/internal';
-const deviceHeight = Dimensions.get('window').height;
-const deviceWidth = Dimensions.get('window').width;
+import { Spinner } from 'native-base';
 import { fetchUpdateAsync } from 'expo-updates';
 
+
+const deviceHeight = Dimensions.get('window').height;
+const deviceWidth = Dimensions.get('window').width;
 type IProps = {
   onScan: (event: any) => void;
   onClose: () => void;

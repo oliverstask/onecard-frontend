@@ -19,11 +19,9 @@ import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompa
 import { logout, AuthState } from '../reducers/auth'
 import { resetSettings } from '../reducers/user'
 
-
+ 
 
 function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
-    
-    const user = useSelector<{user:UserState}, UserState>((state) => state.user);
     
     const [firstName, setFirstName] = useState(user.firstName);
     const [lastName, setLastName] = useState(user.lastName);
@@ -76,7 +74,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
   
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
     
-    //const customData:any[] = []
+    /*//const customData:any[] = []*/
     // console.log(user)
 
 //     const customData: any = useSelector(state, "ProfileInputs")
