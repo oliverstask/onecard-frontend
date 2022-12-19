@@ -1,4 +1,4 @@
-import {  StyleSheet, Text, View, SafeAreaView, ScrollView} from 'react-native';
+import {  StyleSheet, Text, View, SafeAreaView, ScrollView, Pressable} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as RootNavigation from '../utils/RootNavigation'
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,7 +14,7 @@ export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
 
   const [qrList, setQrList] = useState([])
-
+  
   useEffect(()=> {
     (async()=> {
     const fetchData = await fetch(`https://onecard-backend.vercel.app/qrs/user/${userId}`)
@@ -45,6 +45,11 @@ export default function HomeScreen() {
 
           {list}
         </View>
+        <Pressable 
+        style={{marginTop: 300, alignItems: 'center'}}
+        onPress={()=> RootNavigation.navigate('Details', {qrId: '63a042da2b185ed67060d0ea'})}>
+          <Text>Test dynamic page</Text>
+          </Pressable>
     </NativeBaseProvider>
   </ScrollView>
     

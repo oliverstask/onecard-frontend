@@ -7,6 +7,7 @@ import SignupScreen from './screens/SignupScreen';
 import ScanScreen from './screens/ScanScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import MapScreen from './screens/MapScreen';
+import DetailsScreen from './screens/DetailsScreen'
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -36,6 +37,7 @@ export type StackParamList = {
   Signup: undefined;
   TabNavigator: undefined;
   Home: undefined;
+  Details: undefined;
 };
 export type BottomParamList = {
   Home: undefined;
@@ -139,10 +141,16 @@ export default function App() {
         <NativeBaseProvider>
         <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName='Signup' screenOptions={{headerShown: false}}>
+        
         <Stack.Screen
         name='Signup'
         component={SignupScreen}
         options={{headerShown: false}}/>
+        <Stack.Screen 
+        name='Details'
+        component={DetailsScreen}
+        options={{headerShown: true}}
+        />
         <Stack.Screen
         name='TabNavigator'
         component={TabNavigator}
