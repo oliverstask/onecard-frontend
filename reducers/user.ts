@@ -19,7 +19,7 @@ export type UserState = {
 };
 export type ArrObject = {
   name: string,
-  value: string ,
+  infos: string | null,
   switchOn: boolean,
 }
 
@@ -92,7 +92,8 @@ export const userSlice = createSlice({
       state.website = action.payload;
     },
     addCustom : (state, action:PayloadAction<ArrObject>) => {
-      state.customArr.push(action.payload);
+      console.log('adding Custom -----', action.payload);
+      (!state.customArr ? state['customArr'] = [action.payload] : state.customArr.push(action.payload));
     },
     removeCustom : (state, action: PayloadAction<string>) => {
       state.customArr = state.customArr.filter(e=> e?.name !== action.payload);
