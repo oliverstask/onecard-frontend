@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NativeBaseProvider, Box,Text, IconButton, Icon, View, ScrollView, Modal, Button, Radio} from "native-base";
+import { NativeBaseProvider, Box,Text, IconButton, Icon, View, ScrollView, Modal, Button, Radio, Input} from "native-base";
 import * as RootNavigation from '../utils/RootNavigation'
 import AppBar from "../components/AppBar";
 import { StyleSheet } from "react-native";
@@ -38,10 +38,34 @@ export default function ContactScreen() {
   return (
   <>
   <AppBar screenName="Contacts"/>
-  <Button onPress={() => setOpen(true)} size="sm" width="20%" height="5%">
-  <Icon as={MaterialIcons} name="filter-alt" size="10" color="#0F2E3A"/>
-  </Button>
+
+  
+ 
   <SafeAreaView style={styles.container}>
+  <View style={styles.options}>
+  <Pressable
+       style={styles.button2}
+      onPress={() => setOpen(true)}
+      >
+      <IconButton icon={<Icon as={MaterialIcons} name="sort" size="4" color="#285D73"/>}/>
+      <Text style={styles.textButton2}>Sort</Text>
+    </Pressable>
+    <Input placeholder="Search" 
+    variant="filled" 
+    width="55%" 
+    height={"98%"} 
+    borderRadius="5" 
+    py="1" 
+    px="2"
+    backgroundColor={"white"}
+    borderColor={"#285D73"}
+    color="#788F99"
+    fontSize={15}
+    bottom={"167%"}
+    left={"10%"}
+    InputLeftElement={<Icon m="2" ml="3" size="6" color="gray.400" as={<MaterialIcons name="search" />} />} />
+  </View>
+  
     <Pressable
        style={styles.button}
       onPress={() => RootNavigation.navigate('Map')}
@@ -49,11 +73,10 @@ export default function ContactScreen() {
       <IconButton icon={<Icon as={MaterialIcons} name="location-pin" size="4" color="white"/>}/>
       <Text style={styles.textButton}>Map</Text>
     </Pressable>
-
-    <ScrollView showsVerticalScrollIndicator={false}>
-            <Contact />
-          </ScrollView>
+    <View bottom='10'>
+            <Contact/>
           
+            </View>
   </SafeAreaView>
   {open && <BlurView style={styles.absolute} />}
   <Modal isOpen={open} onClose={() => setOpen(false)} safeAreaTop={true} alignItems='flex-start' height="100%" width="100%" >
@@ -81,7 +104,7 @@ const styles = StyleSheet.create({
 container: {
   flex: 1,
   backgroundColor: '#EEF3F6',
-  
+  top: 50
   
   },
 button: {
@@ -102,12 +125,32 @@ button: {
     shadowRadius: 4,
     elevation: 5,
 },
+button2 : {
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: 122,
+  height: 41,
+  left: 20,
+  bottom: 70,
+  backgroundColor: '#white',
+  borderWidth: 1,
+  borderColor: '#285D73',
+  borderRadius: 5,
+},
 textButton: {
   fontFamily: 'Futura',
   height: 30,
   fontWeight: '600',
   fontSize: 16,
   color: 'white',
+  paddingTop: 3
+},
+textButton2: {
+  fontFamily: 'Futura',
+  height: 30,
+  fontWeight: '600',
+  fontSize: 16,
+  color: '#285D73',
   paddingTop: 3
 },
 absolute: {
@@ -117,5 +160,8 @@ absolute: {
   bottom: 0,
   right: 0,
   
+},
+options:{
+  flexDirection: 'row'
 }
 })
