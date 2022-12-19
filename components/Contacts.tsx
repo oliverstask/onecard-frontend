@@ -9,38 +9,27 @@ import { AuthState } from '../reducers/auth'
 
 export default function Contact() {
 
-    const data = [{
-      id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-      fullName: 'Afreen Khan',
-      timeStamp: '12:47 PM',
-      recentText: 'Good Day!',
-      avatarUrl: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
-    }, {
-      id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
-      fullName: 'Sujita Mathur',
-      timeStamp: '11:11 PM',
-      recentText: 'Cheer up, there!',
-      avatarUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyEaZqT3fHeNrPGcnjLLX1v_W4mvBlgpwxnA&usqp=CAU'
-    }, {
-      id: '58694a0f-3da1-471f-bd96-145571e29d72',
-      fullName: 'Anci Barroco',
-      timeStamp: '6:22 PM',
-      recentText: 'Good Day!',
-      avatarUrl: 'https://miro.medium.com/max/1400/0*0fClPmIScV5pTLoE.jpg'
-    }, {
-      id: '68694a0f-3da1-431f-bd56-142371e29d72',
-      fullName: 'Aniket Kumar',
-      timeStamp: '8:56 PM',
-      recentText: 'All the best',
-      avatarUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr01zI37DYuR8bMV5exWQBSw28C1v_71CAh8d7GP1mplcmTgQA6Q66Oo--QedAN1B4E1k&usqp=CAU'
-    }, {
-      id: '28694a0f-3da1-471f-bd96-142456e29d72',
-      fullName: 'Kiara',
-      timeStamp: '12:47 PM',
-      recentText: 'I will call today.',
-      avatarUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwgu1A5zgPSvfE83nurkuzNEoXs9DMNr8Ww&usqp=CAU'
-    }];
-    const [listData, setListData] = useState(data);
+  const [contactData, setContactData] = useState([]);
+
+  const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
+  useEffect(() => {
+    
+    (async () => {
+      //console.log(userId)
+      fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+    
+    .then(response => response.json())
+    .then(data => { 
+      setContactData(data.contacts)
+    });
+  })();
+  }, []);
+
+  const data = contactData
+   
+  console.log(data)
+
+    const [listData, setListData] = useState();
     const [open, setOpen] = useState(false)
   
      
@@ -61,14 +50,14 @@ export default function Contact() {
       setListData(newData);
     };
   
-    const onRowDidOpen = rowKey => {
-      console.log('This row opened', rowKey);
-    };
+    /*const onRowDidOpen = rowKey => {
+      //console.log('This row opened', rowKey);
+    };*/
     
-    const strAscending = [...data].sort((a, b) =>
+    /*onst strAscending = [...data].sort((a, b) =>
     a.fullName > b.fullName ? 1 : -1,
   );
-  const sortedEvents = data.slice().sort((a, b) => a.timeStamp - b.timeStamp);
+  const sortedEvents = data.slice().sort((a, b) => a.timeStamp - b.timeStamp);*/
 
     const renderItem = ({
         item,
@@ -131,6 +120,6 @@ export default function Contact() {
       </HStack>;
   
     return <Box bg="red" safeArea flex="1">
-        <SwipeListView data={listData} renderItem={renderItem} renderHiddenItem={renderHiddenItem} rightOpenValue={-130} previewRowKey={'0'} previewOpenValue={-40} previewOpenDelay={3000} onRowDidOpen={onRowDidOpen} />
+        <SwipeListView data={listData} renderItem={renderItem} renderHiddenItem={renderHiddenItem} rightOpenValue={-130} previewRowKey={'0'} previewOpenValue={-40} previewOpenDelay={3000} />
       </Box>;
   }

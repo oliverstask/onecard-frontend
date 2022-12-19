@@ -20,7 +20,7 @@
     "@react-navigation/native": "6",
     "@react-navigation/native-stack": "6",
     "@reduxjs/toolkit": "^1.9.1",
-    "@shopify/react-native-skia": "^0.1.165",
+    "@shopify/react-native-skia": "0.1.157",
     "expo": "^47.0.8",
     "expo-auth-session": "^3.7.3",
     "expo-barcode-scanner": "~12.1.0",

@@ -27,7 +27,6 @@ export default function HomeScreen() {
     <View style={styles.qrContainer}>
       <QRCode
       size={300}
-      
       value='https://onecard-backend.vercel.app/qrs/qr/639f06124413b3b4d66325ee'
       
       />
@@ -59,6 +58,7 @@ const styles = StyleSheet.create({
       width: '100%',
       height: '60%',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      top: 50
     }
 })

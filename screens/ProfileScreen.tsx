@@ -2,9 +2,8 @@ import AppBar from '../components/AppBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { BottomParamList, StackParamList } from '../App';
-import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable,  AsyncStorage,} from 'react-native';
-
-
+import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import CustomInput from '../components/CustomInput';
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,7 +18,7 @@ import { resetSettings } from '../reducers/user'
 
  
 
-function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
+export default function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -42,7 +41,8 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     const [logoutState, setLogoutState] = useState(false)
 
     const dispatch = useDispatch();
-
+    
+    AsyncStorage.clear();
 
     const user = useSelector<{user:UserState}, UserState>((state) => state.user);
 
@@ -50,7 +50,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
 
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
     
-    const customData:any[] = []
+    /*const customData:any[] = []*/
     // console.log(user)
 
 //     const customData: any = useSelector(state, "ProfileInputs")
@@ -132,7 +132,7 @@ useEffect(()=> {
     const handleCustom = () => {
         dispatch(addCustom({name, infos, switchOn:false}))
         setShowModal(false);
-
+    }
     const handleLogout = () => {
         dispatch(logout())
         dispatch(resetSettings())
@@ -298,6 +298,4 @@ addcus: {
 }
 
 })
-
-export default ProfileScreen
 
