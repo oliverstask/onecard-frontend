@@ -37,7 +37,9 @@ export default function Contact() {
       avatarUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwgu1A5zgPSvfE83nurkuzNEoXs9DMNr8Ww&usqp=CAU'
     }];
     const [listData, setListData] = useState(data);
+    const [open, setOpen] = useState(false)
   
+   
     const closeRow = (rowMap, rowKey) => {
       if (rowMap[rowKey]) {
         rowMap[rowKey].closeRow();
@@ -55,12 +57,17 @@ export default function Contact() {
     const onRowDidOpen = rowKey => {
       console.log('This row opened', rowKey);
     };
-  
+    
+    const strAscending = [...data].sort((a, b) =>
+    a.fullName > b.fullName ? 1 : -1,
+  );
+  const sortedEvents = data.slice().sort((a, b) => a.timeStamp - b.timeStamp);
+
     const renderItem = ({
         item,
         index
       }) => <Box>
-          <Pressable onPress={() => console.log('You touched me')} _dark={{
+          <Pressable onPress={() => setOpen(true)} _dark={{
           bg: 'coolGray.800'
         }} _light={{
           bg: 'white'

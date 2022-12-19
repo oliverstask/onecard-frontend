@@ -37,11 +37,11 @@ export default function ContactScreen() {
           </ScrollView>
           
   </SafeAreaView>
-  {open && <BlurView style={styles.absolute}/>}
-  <Modal isOpen={open} onClose={() => setOpen(false)} safeAreaTop={true} alignItems='flex-start' height="100%" width="100%" _backdrop={{bg: "rgba(0, 0, 0, 0.8)"}}>
+  {open && <BlurView style={styles.absolute} />}
+  <Modal isOpen={open} onClose={() => setOpen(false)} safeAreaTop={true} alignItems='flex-start' height="100%" width="100%" >
   
-  <Modal.Content maxWidth="500" height="100%" >
-    <Modal.CloseButton />
+  <Modal.Content  height="100%" top='4%'>
+   
     <Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value} onChange={nextValue => {
 setValue(nextValue);
 }}>
