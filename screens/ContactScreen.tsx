@@ -34,7 +34,7 @@ export default function ContactScreen() {
   useEffect(() => {
     
     (async () => {
-      //console.log(userId)
+      
       fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
     
     .then(response => response.json())
@@ -50,7 +50,7 @@ export default function ContactScreen() {
 
   const filteredContacts = contactData.filter((e) =>
     e.userId.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.userId.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+    e.userId.lastName.toLowerCase().includes(searchTerm.toLowerCase()) 
   );
 
   return (
@@ -108,7 +108,7 @@ export default function ContactScreen() {
     <Box top="10">
       <FlatList  data={filteredContacts} renderItem={({item}) => {
           
-          console.log(item)
+          
           return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.qrId._id})}>
            <Box borderBottomWidth="1"
             borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">

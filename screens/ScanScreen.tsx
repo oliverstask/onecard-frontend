@@ -3,6 +3,8 @@ import { Text, View, StyleSheet, Dimensions, StatusBar, TouchableOpacity, Animat
 import { Ionicons } from '@expo/vector-icons';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import Constants from 'expo-constants';
+import * as Location from 'expo-location';
+import MapView, { LatLng, Marker } from 'react-native-maps';
 import * as RootNavigation from '../utils/RootNavigation'
 import { useSelector } from 'react-redux'
 import { AuthState } from '../reducers/auth'
@@ -24,22 +26,24 @@ export default function SnyBarCodeScanner(props: IProps, {
   route, navigation,
 }: any) {
   
+  
   const { onScan, onClose, children } = props;
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [screen, setScreen] = useState<string>('scan');
   const [scanned, setScanned] = useState<boolean>(false);
   const [sizeQrCode, setSizeQrCode] = useState<any>({ width: 0, height: 0 });
+  const [currentPosition, setCurrentPosition] = useState<LatLng>()
   const lineAnim = useRef(new Animated.Value(0)).current;
 
   const userId = useSelector<{auth:AuthState}, string>((state)=> state.auth.value.userId)
-  const lat = 'lat'
-  const lon = 'lon'
+  const lat = currentPosition?.latitude
+  const lon = currentPosition?.longitude
 
   const onLineLayout = (event: any) => {
     const { x, y, height, width } = event.nativeEvent.layout;
     setSizeQrCode({ width: width, height: height });
   };
-
+  
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { status }: any = await BarCodeScanner.requestPermissionsAsync();
@@ -52,7 +56,20 @@ export default function SnyBarCodeScanner(props: IProps, {
   useEffect(() => {
     handleAnimationLine();
   }, []);
+  
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
 
+      if (status === 'granted') {
+        Location.watchPositionAsync({ distanceInterval: 10 },
+          (location) => {
+            setCurrentPosition(location.coords);
+            
+          });
+      }
+    })();
+  }, []);
 
   const handleAnimationLine = () => {
     lineAnim.setValue(0);
@@ -74,7 +91,7 @@ export default function SnyBarCodeScanner(props: IProps, {
     setScanned(true);
     const contact: any = await (await fetch(data)).json()
     const arr = contact.responseArr
-    console.log(data)
+    
     const qrId = data.replace('https://onecard-backend.vercel.app/qrs/qr/','')
     alert(`${arr[0].firstName} ${arr[1].lastName} has been added to your contact list`)
     const fetchData = await fetch('https://onecard-backend.vercel.app/transactions', {

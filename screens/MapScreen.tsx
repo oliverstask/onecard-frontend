@@ -5,6 +5,8 @@ import * as Location from 'expo-location';
 import MapView, { LatLng, Marker } from 'react-native-maps';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
+import { useSelector } from 'react-redux';
+import { AuthState } from '../reducers/auth';
 
 
 
@@ -13,7 +15,9 @@ export default function MapScreen() {
 
   const [currentPosition, setCurrentPosition] = useState<LatLng>();
   const [isModalVisible, setModalVisible] = useState(false);
-
+  const [contactName, setContactName] = useState<string[]>([]);
+  const [ newMap, setNewMap] = useState<LatLng[]>([]);
+  const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -32,8 +36,28 @@ export default function MapScreen() {
     })();
   }, []);
 
+  useEffect(() => {
+    fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data) {
+        data.contacts.forEach((element:any) => {
+          fetch(`https://onecard-backend.vercel.app/qrs/qr/${element.qrId._id}`)
+          .then(response => response.json())
+          .then(qrData => {
+            console.log(qrData, element.location)
+            setNewMap([...newMap, {longitude:element.location.lon, latitude:element.location.lat}])
+            setContactName([...contactName, `${qrData.responseArr.find((o:any) => !!o['firstName'])['firstName']} ${qrData.responseArr.find((o:any) => !!o['lastName'])['lastName']}`])
+          })
+        });
+      }
+    })
+  },[]);
 
-  
+  const markers = newMap.map((e,i) => {
+    return <Marker coordinate={{ latitude: e.latitude, longitude: e.longitude }} title={contactName[i]} />
+  })
+
   return (
     <>
     <AppBar screenName='Map' />
@@ -41,7 +65,7 @@ export default function MapScreen() {
       
 
       <MapView style={styles.map}>
-       {currentPosition && <Marker coordinate={currentPosition} title="My position" pinColor="#5F038A" onPress={toggleModal}/>}
+        {markers}
       </MapView>
     </View>
     <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
