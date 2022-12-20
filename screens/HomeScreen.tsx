@@ -7,11 +7,16 @@ import UploadImage from '../components/UploadAvatar';
 import UploadBanner from '../components/UploadBanner';
 import { Icon, IconButton, NativeBaseProvider, Tooltip, Button, Center} from 'native-base';
 import QrCard from '../components/QrCard';
+import OtherQrs from '../components/OtherQrs';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../reducers/auth';
 
+import { Modal } from 'react-native';
+
 export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
+  const fav = useSelector((state: any)=> state.qr.fav)
+  console.log(fav)
   console.log(userId)
   const [qrList, setQrList] = useState([])
   
@@ -20,13 +25,19 @@ export default function HomeScreen() {
     const fetchData = await fetch(`https://onecard-backend.vercel.app/qrs/user/${userId}`)
     const response = await fetchData.json()
     // console.log(userId)
-    setQrList(response.qrList)
+    const sortedList = response.qrList.sort((a: any, b: any)=>  Number(b.isFav) - Number(a.isFav))
+    console.log('sorted list ------', sortedList)
+    setQrList(sortedList)
   })()
-  },[])
+  },[fav])
   
   const list = qrList.map((data: any,i)=> {
-    console.log(data)
-    return <QrCard qrName={data.qrName} qrId={data._id} key={i} />
+    
+    if (i === 0){
+    return <QrCard qrName={data.qrName} qrId={data._id} key={i} isFav={data.isFav}/>
+    } else {
+      return <OtherQrs qrName={data.qrName} qrId={data._id} key={i} isFav={data.isFav}/>
+      }
   })
  return (
   <ScrollView>
