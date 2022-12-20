@@ -82,8 +82,8 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
 
 // console.log(customData)
 // const customDisplay = ''
-    const customDisplay = customData.map((e:any, i:number) => <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(value) => handleDeleteCustomItem(value)} />)
-
+    const customDisplay = customData.map((e:any, i:number) => 
+    <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(value) => handleDeleteCustomItem(value)} />)
 
     useEffect(() => {
         if (!userToken) {
@@ -285,13 +285,13 @@ return (
       </Pressable>
       <Text style={styles.addcus}>Add custom infos..</Text>
         </HStack>
-        <View>
+        <View >
 
 
          {/* <CustomInput name='' color='' icon='' value='' isCustom placeholder='Website' onBlur={(value) => setWebsite(value)} onDelete={handleDeleteCustomItem} />  */}
- 
+       
         {customDisplay}
-        
+       
         </View>
         </NativeBaseProvider>
         
@@ -360,7 +360,9 @@ const styles = StyleSheet.create({
         height: 34,
         left: 7,
 
-    }
+    },
+
+
 
 })
 

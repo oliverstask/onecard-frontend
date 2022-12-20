@@ -34,7 +34,7 @@ export default function SignupScreen({
   const [signInMessage, setSignInMessage ] = useState('')
   
   const [isLoading, setIsLoading] = useState(false)
-  
+  const [errorMessage, setErrorMessage] = useState(false)
  
   const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
@@ -137,28 +137,45 @@ export default function SignupScreen({
 
   const handleSignup = async () => {
     setIsLoading(true)
-    const fetchData = await fetch('https://onecard-backend.vercel.app/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        firstName: signupFirstName, 
-        lastName: signupLastName, 
-        email: signupEmail, 
-        password: signupPassword, 
+
+   
+    const EMAIL_REGEX: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    //check if email is OK
+    // if NOK
+    // - setIsloading(false)
+    // - setErrorMessage('c'est honteux !')
+    // if OK, proceed!
+
+    if (EMAIL_REGEX.test(signupEmail)) {
+      const fetchData = await fetch('https://onecard-backend.vercel.app/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          firstName: signupFirstName, 
+          lastName: signupLastName, 
+          email: signupEmail, 
+          password: signupPassword, 
+        })
       })
-    })
-    const data = await fetchData.json()
-    
-    if (data?.result){
-      dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
-      storeUserSettingsInfos(data.userId)
-      navigation.navigate('TabNavigator')
-      setIsLoading(false)
+      const data = await fetchData.json()
+      
+      if (data?.result){
+        dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+        storeUserSettingsInfos(data.userId)
+        navigation.navigate('TabNavigator')
+        setIsLoading(false)
+      } else {
+        console.log(data.message)
+        setSignUpMessage(data.message)
+        setIsLoading(false)
+      }
     } else {
-      console.log(data.message)
-      setSignUpMessage(data.message)
       setIsLoading(false)
+      setErrorMessage(true)
     }
+
+    
 
   }
 
@@ -238,6 +255,7 @@ export default function SignupScreen({
     }} type={show ? "text" : "password"} InputRightElement={<Pressable onPress={() => setShow(!show)}>
           <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="muted.400" />
           </Pressable>} placeholder="Password" />
+          {errorMessage && <Text>Invalid email address</Text>}
 
       <Pressable 
       style={styles.button}
