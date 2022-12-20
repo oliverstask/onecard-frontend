@@ -12,7 +12,7 @@ import { AuthState } from '../reducers/auth';
 
 export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
-
+  console.log(userId)
   const [qrList, setQrList] = useState([])
   
   useEffect(()=> {
@@ -25,6 +25,7 @@ export default function HomeScreen() {
   },[])
   
   const list = qrList.map((data: any,i)=> {
+    console.log(data)
     return <QrCard qrName={data.qrName} qrId={data._id} key={i} />
   })
  return (
