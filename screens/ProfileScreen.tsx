@@ -52,7 +52,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
             field:'firstName'|'lastName'|'email'|'phoneNumber'|'address'|'companyName'|'website'|'linkedin'|'whatsApp'|'twitter'|'instagram'|'facebook'|'tiktok'|'resume',
             value:string
         ) => {
-            console.log('----UPDATING---', field)
+           
 
         const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${isRequired}`, {
             method: 'PUT',
@@ -63,11 +63,9 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
              newValue: value
             })
           })
-          const data = await fetchData.json()
-          console.log(data)
-
+          const data = await fetchData.json()    
     }
-
+   
     
     const customData = useSelector<{ user: UserState }, ArrObject[]>((state) => state.user.customArr);
 
@@ -81,7 +79,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
 
 // console.log(customData)
 // const customDisplay = ''
-    const customDisplay = customData.map((e:any, i:number) => <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(name) => handleDeleteCustomItem(name)} />)
+    const customDisplay = customData.map((e:any, i:number) => <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(value) => handleDeleteCustomItem(value)} />)
 
 
     useEffect(() => {
@@ -96,9 +94,19 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     }, [])
 
 
-    const handleDeleteCustomItem = (name:string) => {
-       dispatch(removeCustom(name))
-
+    const handleDeleteCustomItem = async(value:string) => {
+       dispatch(removeCustom(value))
+       const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/customs`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+         userId, 
+        url: value,
+        
+        })
+      })
+      const data = await fetchData.json()    
+      console.log(data)
     }
 
     const handleFieldChange = (value: string, isRequired:'required'|'userSettings', type: 'firstName'|'lastName'|'email'|'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website') => {
@@ -162,10 +170,24 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     }
 
 
-    const handleCustom = () => {
+    const handleCustom = async () => {
+         dispatch(addCustom({name, infos, switchOn:false}))
+         setShowModal(false)
+        
+         const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/customs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+             userId, 
+            name,
+            url: infos,
+            color: 'color',
+            icon: 'icon'
+            })
+          })
+          const data = await fetchData.json()    
+          console.log(data)
 
-        dispatch(addCustom({name, infos, switchOn:false}))
-        setShowModal(false)
     }   
 
 
