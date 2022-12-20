@@ -18,11 +18,14 @@ import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompa
 
 import { logout, AuthState } from '../reducers/auth'
 import { resetSettings } from '../reducers/user'
+import { url } from 'inspector';
 
- 
+
 
 function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
-    const user: any = useSelector<{user:UserState}>((state) => state.user)
+    
+    const user = useSelector<{user:UserState}, UserState>((state) => state.user);
+    
     const [firstName, setFirstName] = useState(user.firstName);
     const [lastName, setLastName] = useState(user.lastName);
     const [email, setEmail] = useState(user.email);
@@ -52,7 +55,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
             field:'firstName'|'lastName'|'email'|'phoneNumber'|'address'|'companyName'|'website'|'linkedin'|'whatsApp'|'twitter'|'instagram'|'facebook'|'tiktok'|'resume',
             value:string
         ) => {
-            console.log('----UPDATING---', field)
+           
 
         const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${isRequired}`, {
             method: 'PUT',
@@ -63,25 +66,23 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
              newValue: value
             })
           })
-          const data = await fetchData.json()
-          console.log(data)
-
+          const data = await fetchData.json()    
     }
-
+   
     
     const customData = useSelector<{ user: UserState }, ArrObject[]>((state) => state.user.customArr);
 
   
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
     
-    /*//const customData:any[] = []*/
+    //const customData:any[] = []
     // console.log(user)
 
 //     const customData: any = useSelector(state, "ProfileInputs")
 
 // console.log(customData)
 // const customDisplay = ''
-    const customDisplay = customData.map((e:any, i:number) => <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(name) => handleDeleteCustomItem(name)} />)
+    const customDisplay = customData.map((e:any, i:number) => <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(value) => handleDeleteCustomItem(value)} />)
 
 
     useEffect(() => {
@@ -96,9 +97,20 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     }, [])
 
 
-    const handleDeleteCustomItem = (name:string) => {
-       dispatch(removeCustom(name))
+    const handleDeleteCustomItem = async (value:string) => {
+        console.log('PRE DELETE',value)
+        dispatch(removeCustom(value))
+        const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/customs`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                userId, 
+                url: value,
+            })
+        })
 
+        const data = await fetchData.json()    
+        console.log('POST DELETE',data)
     }
 
     const handleFieldChange = (value: string, isRequired:'required'|'userSettings', type: 'firstName'|'lastName'|'email'|'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website') => {
@@ -162,10 +174,24 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     }
 
 
-    const handleCustom = () => {
+    const handleCustom = async () => {
+         dispatch(addCustom({name, infos, switchOn:false}))
+         setShowModal(false)
+        
+         const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/customs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+             userId, 
+            name,
+            url: infos,
+            color: 'color',
+            icon: 'icon'
+            })
+          })
+          const data = await fetchData.json()    
+          console.log(data)
 
-        dispatch(addCustom({name, infos, switchOn:false}))
-        setShowModal(false)
     }   
 
 
