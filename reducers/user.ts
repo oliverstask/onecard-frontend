@@ -18,6 +18,8 @@ export type UserState = {
      customArr: ArrObject [],
 };
 export type ArrObject = {
+  color: string,
+  icon: string,
   name: string,
   infos: string | null,
   switchOn: boolean,
