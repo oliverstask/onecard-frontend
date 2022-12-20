@@ -9,7 +9,7 @@ const DetailsScreen = ({route}:any) => {
     
 
     const [data, setData] = useState([])
-    console.log(qrId)
+    
 
     
 
@@ -19,7 +19,7 @@ const DetailsScreen = ({route}:any) => {
         (async()=> {
             const fetchData = await fetch(`https://onecard-backend.vercel.app/qrs/qr/${qrId}`)
             const response = await fetchData.json()
-            console.log(fetchData)
+            
             setData(response?.responseArr)
         })()
     }, [])

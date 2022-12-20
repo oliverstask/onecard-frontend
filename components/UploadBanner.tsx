@@ -13,7 +13,7 @@ export default function UploadBanner() {
       aspect: [4,3],
       quality: 1,
     });
-    console.log(JSON.stringify(_image));
+    
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
     }

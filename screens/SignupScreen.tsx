@@ -107,7 +107,7 @@ export default function SignupScreen({
       if (fbResponse?.type === "success") {
         const { code } = fbResponse.params
         const user = await facebookUserInfo(fbToken)
-        console.log(user)
+       
         const fetchData = await fetch('https://onecard-backend.vercel.app/auth/socialLogin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -130,7 +130,7 @@ export default function SignupScreen({
     const { firstName, lastName, email } = userData.user
     const { phoneNumber, companyName, address, linkedin, website } = userData.user.userSettings
     dispatch(settingsInfos({firstName, lastName, email, phoneNumber, companyName, address, linkedin, website}))
-    console.log(firstName, lastName, email, phoneNumber, companyName, address, linkedin, website)
+    
   }
 
 
@@ -155,7 +155,6 @@ export default function SignupScreen({
       navigation.navigate('TabNavigator')
       setIsLoading(false)
     } else {
-      console.log(data.message)
       setSignUpMessage(data.message)
       setIsLoading(false)
     }
@@ -170,7 +169,7 @@ export default function SignupScreen({
 		      body: JSON.stringify({ email: signinEmail, password: signinPassword })
         })
         const data = await fetchData.json()
-        // console.log(data)
+        
         if (data?.result){
           dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
           storeUserSettingsInfos(data.userId)
@@ -179,8 +178,6 @@ export default function SignupScreen({
           setIsLoading(false)
           
         } else {
-          console.log(data.message)
-          console.log(signinEmail, signinPassword)
           setSignInMessage(data.message)
           setIsLoading(false)
         }

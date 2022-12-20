@@ -12,20 +12,20 @@ import { AuthState } from '../reducers/auth';
 
 export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
-  console.log(userId)
+  
   const [qrList, setQrList] = useState([])
   
   useEffect(()=> {
     (async()=> {
     const fetchData = await fetch(`https://onecard-backend.vercel.app/qrs/user/${userId}`)
     const response = await fetchData.json()
-    // console.log(userId)
+    
     setQrList(response.qrList)
   })()
   },[])
   
   const list = qrList.map((data: any,i)=> {
-    console.log(data)
+    
     return <QrCard qrName={data.qrName} qrId={data._id} key={i} />
   })
  return (
