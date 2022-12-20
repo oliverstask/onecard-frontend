@@ -21,7 +21,7 @@ export default function ContactScreen() {
       const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
       const response = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
       const contactInfos = await response.json()
-      //console.log(userId)
+      //console.log(e.userId)
       const dataArr = contactInfos.contacts.map((e:any, i:any)=> {
         const {firstName, lastName} = e.userId
         const {qrName} = e.qrId
