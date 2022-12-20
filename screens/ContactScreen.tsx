@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NativeBaseProvider, Box,Text, IconButton, Icon, View, ScrollView, Modal, Button, Radio, Input} from "native-base";
+import { Text, IconButton, Icon, View, Modal, Radio, Input} from "native-base";
 import * as RootNavigation from '../utils/RootNavigation'
 import AppBar from "../components/AppBar";
 import { StyleSheet } from "react-native";
@@ -15,24 +15,6 @@ export default function ContactScreen() {
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("one");
-  
- 
-    const fetchContactList = async() => {
-      const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
-      const response = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-      const contactInfos = await response.json()
-      //console.log(userId)
-      const dataArr = contactInfos.contacts.map((e:any, i:any)=> {
-        const {firstName, lastName} = e.userId
-        const {qrName} = e.qrId
-        const fullName = [firstName, lastName].join(' ')
-        return {id: i, fullName, recentText: qrName, avatarUrl: 'testurl'}
-
-      })
-      console.log(dataArr)
-    }
- 
-    fetchContactList()
 
 
   return (
@@ -47,7 +29,7 @@ export default function ContactScreen() {
        style={styles.button2}
       onPress={() => setOpen(true)}
       >
-      <IconButton icon={<Icon as={MaterialIcons} name="sort" size="4" color="#285D73"/>}/>
+      <Icon as={MaterialIcons} name="filter-alt" size="6" color="#285D73"/>
       <Text style={styles.textButton2}>Sort</Text>
     </Pressable>
     <Input placeholder="Search" 
@@ -63,7 +45,8 @@ export default function ContactScreen() {
     fontSize={15}
     bottom={"167%"}
     left={"10%"}
-    InputLeftElement={<Icon m="2" ml="3" size="6" color="gray.400" as={<MaterialIcons name="search" />} />} />
+    InputLeftElement={<Icon m="2" ml="3" size="6" color="gray.400" as={<MaterialIcons name="search" />} />} 
+    />
   </View>
   
     <Pressable

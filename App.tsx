@@ -116,7 +116,7 @@ const TabNavigator = () => {
         bottom: 30,
         height:80,
     }}} />
-    <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity'}}/>
+    <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Contacts'}}/>
     <Tab.Screen name='Profile' component={ProfileScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}} />
     <Tab.Screen name='Map' component={MapScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}}/>
     
