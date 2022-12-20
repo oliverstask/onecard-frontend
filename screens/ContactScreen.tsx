@@ -12,26 +12,13 @@ import { AuthState } from '../reducers/auth';
 
 export default function ContactScreen() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [order, setOrder] = useState<'az'|'date'>('az')
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("one");
   const [contactData, setContactData] = useState<any[]>([]);
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
 
-    const fetchContactList = async() => {
-      const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
-      const response = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-      const contactInfos = await response.json()
-      //console.log(e.userId)
-      const dataArr = contactInfos.contacts.map((e:any, i:any)=> {
-        const {firstName, lastName} = e.userId
-        const {qrName} = e.qrId
-        const fullName = [firstName, lastName].join(' ')
-        return {id: i, fullName, recentText: qrName, avatarUrl: 'testurl'}
-      })
-      setContactData(dataArr)
-    }
-  
-
+    
   useEffect(() => {
     (async () => {
 
@@ -68,10 +55,26 @@ export default function ContactScreen() {
     setSearchTerm(text);
   };
 
-  const filteredContacts = contactData.filter((e) =>
+  let filteredContacts = contactData.filter((e) =>
     e.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     e.lastName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  filteredContacts = 
+  (order === 'az' ? filteredContacts.sort((a,b)=>{
+    if(a.firstName > b.firstName){
+        return 1;
+    }
+    if(a.firstName < b.firstName){
+        return -1;
+    }
+    return 0;
+}) : 
+filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0)))
+
+
+
+
 
   return (
   <>
@@ -154,20 +157,15 @@ export default function ContactScreen() {
             </View>
   </SafeAreaView>
   {open && <BlurView style={styles.absolute} />}
-  <Modal isOpen={open} onClose={() => setOpen(false)} safeAreaTop={true} alignItems='flex-start' height="100%" width="100%" >
+  <Modal isOpen={open} onClose={() => setOpen(false)} safeAreaTop={true} height="20%" width="50%" >
   
-  <Modal.Content  height="100%" top='4%'>
+  <Modal.Content  height="100%" top='100%'>
    
-    <Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value} onChange={nextValue => {
-setValue(nextValue);
-}}>
-<Radio value="one" my={1}>
-  One
-</Radio>
-<Radio value="two" my={1}>
-  Two
-</Radio>
-</Radio.Group>;
+    <Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value}
+      onChange={nextValue => setOrder(nextValue as 'az'|'date')}>
+      <Radio value="az" my={1}>A-Z</Radio>
+      <Radio value="date" my={1}>Date</Radio>
+    </Radio.Group>
   </Modal.Content>
   
 </Modal>
