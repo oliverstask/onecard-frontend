@@ -27,7 +27,8 @@ export default function ContactScreen() {
         const {qrName} = e.qrId
         const fullName = [firstName, lastName].join(' ')
         return {id: i, fullName, recentText: qrName, avatarUrl: 'testurl'}
-
+      })
+    }
   
 
   useEffect(() => {
