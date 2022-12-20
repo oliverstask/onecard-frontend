@@ -18,6 +18,8 @@ export type UserState = {
      customArr: ArrObject [],
 };
 export type ArrObject = {
+  color: string,
+  icon: string,
   name: string,
   infos: string | null,
   switchOn: boolean,
@@ -92,7 +94,7 @@ export const userSlice = createSlice({
       state.website = action.payload;
     },
     addCustom : (state, action:PayloadAction<ArrObject>) => {
-      console.log('adding Custom -----', action.payload);
+      
       (!state.customArr ? state['customArr'] = [action.payload] : state.customArr.push(action.payload));
     },
     removeCustom : (state, action: PayloadAction<string>) => {

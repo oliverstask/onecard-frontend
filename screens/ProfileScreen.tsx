@@ -75,25 +75,23 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
   
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
     
-    //const customData:any[] = []
-    // console.log(user)
 
 //     const customData: any = useSelector(state, "ProfileInputs")
 
-// console.log(customData)
+
 // const customDisplay = ''
     const customDisplay = customData.map((e:any, i:number) => 
     <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(value) => handleDeleteCustomItem(value)} />)
 
     useEffect(() => {
         if (!userToken) {
-            console.log('logout...')
+        
             navigation.navigate('Signup')
         }
     }, [logoutState])
 
     useEffect(() => {
-        console.log(user)
+        
     }, [])
 
 
@@ -109,8 +107,10 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
             })
         })
 
+
         const data = await fetchData.json()    
         console.log('POST DELETE',data)
+
     }
 
     const handleFieldChange = (value: string, isRequired:'required'|'userSettings', type: 'firstName'|'lastName'|'email'|'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website') => {
@@ -190,7 +190,6 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
             })
           })
           const data = await fetchData.json()    
-          console.log(data)
 
     }   
 

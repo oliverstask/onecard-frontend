@@ -17,26 +17,60 @@ export default function ContactScreen() {
   const [contactData, setContactData] = useState<any[]>([]);
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
 
+    const fetchContactList = async() => {
+      const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
+      const response = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+      const contactInfos = await response.json()
+      //console.log(e.userId)
+      const dataArr = contactInfos.contacts.map((e:any, i:any)=> {
+        const {firstName, lastName} = e.userId
+        const {qrName} = e.qrId
+        const fullName = [firstName, lastName].join(' ')
+        return {id: i, fullName, recentText: qrName, avatarUrl: 'testurl'}
+      })
+      setContactData(dataArr)
+    }
+  
+
   useEffect(() => {
-    
     (async () => {
-      //console.log(userId)
+
+      
       fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
     
     .then(response => response.json())
-    .then(data => { 
-      setContactData(data.contacts)
-    });
+    
+    .then(data => {
+      if (data) {
+        data.contacts.forEach((element:any) => {
+          fetch(`https://onecard-backend.vercel.app/qrs/qr/${element.qrId._id}`)
+          .then(response => response.json())
+          .then(qrData => {
+            console.log(qrData)
+            const contact = {
+              id: element.qrId._id,
+              firstName: qrData.responseArr.find((o:any) => !!o['firstName'])['firstName'],
+              lastName: qrData.responseArr.find((o:any) => !!o['lastName'])['lastName'],
+              date: element.date
+            }
+            setContactData([...contactData, contact])
+          })
+        });
+      }
+    })
   })();
+  
   }, []);
   
+  
+
   const handleSearch = (text:any) => {
     setSearchTerm(text);
   };
 
   const filteredContacts = contactData.filter((e) =>
-    e.userId.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.userId.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+    e.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    e.lastName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -94,8 +128,8 @@ export default function ContactScreen() {
     <Box top="10">
       <FlatList  data={filteredContacts} renderItem={({item}) => {
           
-          console.log(item)
-          return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.qrId._id})}>
+          
+          return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.id})}>
            <Box borderBottomWidth="1"
             borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
               <HStack space={[2, 3]} justifyContent="space-between">
@@ -103,16 +137,14 @@ export default function ContactScreen() {
                          uri: item.avatarUrl
                   }} />
                     <VStack>
-                      <Text color="coolGray.800" bold>
-                        {item.userId.firstName} {item.userId.lastName}
+                      <Text color="coolGray.800" top="3.5" fontSize="15">
+                        {item.firstName} {item.lastName}
                       </Text>
-                       <Text color="coolGray.600" >
-                             {item._id}
-                       </Text>
+                       
                      </VStack>
                   <Spacer />
               <Text fontSize="xs"color="coolGray.800" alignSelf="flex-start">
-                {item.date}
+                {`${new Date(item.date).toLocaleDateString()} ${new Date(item.date).toLocaleTimeString()}`}
               </Text>
             </HStack>
           </Box>
