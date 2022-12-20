@@ -55,7 +55,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     const userId= useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
     const customData = useSelector<{ user: UserState }, ArrObject[]>((state) => state.user.customArr);
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
-    console.log(customData)
+
     useEffect(() => {
         if (!userToken) {
         
@@ -114,8 +114,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
             }
         }
     }
-// const customDisplay = ''
-    
+
 
 
     
@@ -336,10 +335,13 @@ return (
       </Pressable>
       <Text style={styles.addcus}>Add custom infos..</Text>
         </HStack>
+
         <View>
  
          {customDisplay}
         
+       
+
         </View>
         </NativeBaseProvider>
         
@@ -408,7 +410,9 @@ const styles = StyleSheet.create({
         height: 34,
         left: 7,
 
-    }
+    },
+
+
 
 })
 

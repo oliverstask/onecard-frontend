@@ -52,9 +52,11 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
                     <Input mx="3" w="70%"placeholder={placeholder} value={inputValue} onChangeText={(e:any) => setInputValue(e)} onEndEditing={(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => handleTextChange(e.nativeEvent.text)} keyboardType={keyboardType} style={styles.textInput}/>
             }     
             { isCustom &&
-                <Text>
+            <View style={styles.urlinput}>
+                <Text >
                     {value}
                 </Text>
+                </View>
             }
             { isCustom && 
                 <Icon as={MaterialIcons} onPress={()=>handleDelete(value)} name="delete" size={8} color="rgba(18, 53, 67, 0.69)" top='0' left='1'/>
@@ -80,6 +82,12 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
         height: 40,
         borderRadius: 5,
     },
+    urlinput : {
+        
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        marginLeft: 7,
+    }
 
   
         /*shadowColor: "#000",
