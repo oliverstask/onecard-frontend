@@ -18,11 +18,14 @@ import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompa
 
 import { logout, AuthState } from '../reducers/auth'
 import { resetSettings } from '../reducers/user'
+import { url } from 'inspector';
 
- 
+
 
 function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
-    const user: any = useSelector<{user:UserState}>((state) => state.user)
+    
+    const user = useSelector<{user:UserState}, UserState>((state) => state.user);
+    
     const [firstName, setFirstName] = useState(user.firstName);
     const [lastName, setLastName] = useState(user.lastName);
     const [email, setEmail] = useState(user.email);
@@ -72,7 +75,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
   
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
     
-    /*//const customData:any[] = []*/
+    //const customData:any[] = []
     // console.log(user)
 
 //     const customData: any = useSelector(state, "ProfileInputs")
@@ -94,19 +97,20 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     }, [])
 
 
-    const handleDeleteCustomItem = async(value:string) => {
-       dispatch(removeCustom(value))
-       const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/customs`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+    const handleDeleteCustomItem = async (value:string) => {
+        console.log('PRE DELETE',value)
+        dispatch(removeCustom(value))
+        const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/customs`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-         userId, 
-        url: value,
-        
+                userId, 
+                url: value,
+            })
         })
-      })
-      const data = await fetchData.json()    
-      console.log(data)
+
+        const data = await fetchData.json()    
+        console.log('POST DELETE',data)
     }
 
     const handleFieldChange = (value: string, isRequired:'required'|'userSettings', type: 'firstName'|'lastName'|'email'|'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website') => {
