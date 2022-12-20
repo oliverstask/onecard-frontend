@@ -28,19 +28,16 @@ export default function ContactScreen() {
         const fullName = [firstName, lastName].join(' ')
         return {id: i, fullName, recentText: qrName, avatarUrl: 'testurl'}
       })
+      setContactData(dataArr)
     }
   
 
   useEffect(() => {
     
     (async () => {
-      
-      fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-    
-    .then(response => response.json())
-    .then(data => { 
-      setContactData(data.contacts)
-    });
+
+      fetchContactList()
+
   })();
   }, []);
   
