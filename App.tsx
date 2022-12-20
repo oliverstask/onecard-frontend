@@ -18,15 +18,13 @@ import { faAddressBook } from '@fortawesome/free-solid-svg-icons/faAddressBook'
 import { faQrcode} from '@fortawesome/free-solid-svg-icons/faQrcode'
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { persistStore, persistReducer } from 'redux-persist';
-import { PersistGate } from 'redux-persist/integration/react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 import { Provider } from 'react-redux';
-import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import user from './reducers/user';
 import auth from './reducers/auth';
-import qr from './reducers/qr'
+import qr from './reducers/qr';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import AppBar from './components/AppBar';
 import { Icon, IconButton, NativeBaseProvider } from 'native-base';
@@ -49,21 +47,17 @@ export type BottomParamList = {
   Signup: undefined;
 };
 
+const store = configureStore({
+  reducer: {user, auth, qr}
+})
+
+
 
 const Stack = createNativeStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator<BottomParamList>();
 
-const reducers = combineReducers({user, auth, qr});
-const persistConfig = {
-  key: 'oneCard', 
-  storage: AsyncStorage
-};
-const store = configureStore({
-  reducer: persistReducer(persistConfig, reducers),
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-    serializableCheck: false }),
-});
-const persistor = persistStore(store);
+
+
 const customTabBarStyle = {
   allowFontScaling: true,
   labelStyle: { fontSize: 16, paddingTop: 5 },
@@ -117,7 +111,7 @@ const TabNavigator = () => {
         bottom: 30,
         height:80,
     }}} />
-    <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Contacts'}}/>
+    <Tab.Screen name="Contact" component={ContactScreen} options={{tabBarLabel: 'Activity'}}/>
     <Tab.Screen name='Profile' component={ProfileScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}} />
     <Tab.Screen name='Map' component={MapScreen} options={{headerShown: false, tabBarItemStyle:{display:'none'}}}/>
     
@@ -138,7 +132,6 @@ export default function App() {
   }
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
         <NativeBaseProvider>
         <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName='Signup' screenOptions={{headerShown: false}}>
@@ -160,7 +153,6 @@ export default function App() {
         </Stack.Navigator>
        </NavigationContainer>
        </NativeBaseProvider>
-      </PersistGate>
     </Provider>
   );
 }
