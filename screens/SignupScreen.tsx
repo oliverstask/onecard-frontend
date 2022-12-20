@@ -147,7 +147,7 @@ export default function SignupScreen({
     // - setErrorMessage('c'est honteux !')
     // if OK, proceed!
 
-    if (EMAIL_REGEX.test(signupEmail)) {
+   
       const fetchData = await fetch('https://onecard-backend.vercel.app/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,21 +159,20 @@ export default function SignupScreen({
         })
       })
       const data = await fetchData.json()
-      
-      if (data?.result){
-        dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
-        storeUserSettingsInfos(data.userId)
-        navigation.navigate('TabNavigator')
+      if (!EMAIL_REGEX.test(signupEmail)) {
         setIsLoading(false)
-      } else {
-        console.log(data.message)
-        setSignUpMessage(data.message)
-        setIsLoading(false)
-      }
-    } else {
+        setErrorMessage(true)
+      } else if (data?.result){
+          dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
+          storeUserSettingsInfos(data.userId)
+          navigation.navigate('TabNavigator')
+          setIsLoading(false)
+        } else {
+      console.log(data.message)
+      setSignUpMessage(data.message)
       setIsLoading(false)
-      setErrorMessage(true)
-    }
+    
+  }
 
     
 
