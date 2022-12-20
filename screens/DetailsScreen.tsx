@@ -3,8 +3,15 @@ import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 
 
 const DetailsScreen = ({route}:any) => {
-    const {qrId} = route.params
+    let {qrId} = route.params
+    qrId = String(qrId)
+    // const qrId = '63a042da2b185ed67060d0ea'
+    
+
     const [data, setData] = useState([])
+    console.log(qrId)
+
+    
 
 
 
@@ -12,12 +19,12 @@ const DetailsScreen = ({route}:any) => {
         (async()=> {
             const fetchData = await fetch(`https://onecard-backend.vercel.app/qrs/qr/${qrId}`)
             const response = await fetchData.json()
+            console.log(fetchData)
             setData(response?.responseArr)
         })()
     }, [])
 
-    console.log(qrId)
-    console.log(data)
+   
     
     const infos = data.map((e,i)=> {
         const keyName:any = Object.keys(e)

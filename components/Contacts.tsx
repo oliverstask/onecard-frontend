@@ -5,6 +5,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 import { MaterialIcons, Ionicons, Entypo } from '@expo/vector-icons';
 import { useSelector } from 'react-redux'
 import { AuthState } from '../reducers/auth'
+import * as RootNavigation from '../utils/RootNavigation'
 
 
 export default function Contact() {
@@ -123,7 +124,11 @@ export default function Contact() {
       return <Box top="10">
       <FlatList data={contactData} renderItem={({
       item
-    }) => <Box borderBottomWidth="1" _dark={{
+    }) => {
+      
+      console.log(item.qrId._id)
+    return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.qrId._id})}>
+    <Box borderBottomWidth="1" _dark={{
       borderColor: "muted.50"
     }} borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
             <HStack space={[2, 3]} justifyContent="space-between">
@@ -149,6 +154,7 @@ export default function Contact() {
                 {item.date}
               </Text>
             </HStack>
-          </Box>} keyExtractor={item => item.id} />
+          </Box>
+          </Pressable>)} }keyExtractor={item => item.id} />
     </Box>;
 };
