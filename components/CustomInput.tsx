@@ -1,10 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Button, StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, ScrollView, NativeSyntheticEvent, TextInputEndEditingEventData } from 'react-native';
+import { Button, StyleSheet, Text, Switch, View, SafeAreaView, Image, TextInput, Pressable, ScrollView, NativeSyntheticEvent, TextInputEndEditingEventData } from 'react-native';
 import ProfileScreen from "../screens/ProfileScreen";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { MaterialIcons } from "@expo/vector-icons";
-import { Switch, HStack, Center, NativeBaseProvider, Input, Box, Icon } from "native-base";
+import { HStack, Center, NativeBaseProvider, Input, Box, Icon } from "native-base";
 import { faTimes, height} from '@fortawesome/free-solid-svg-icons/faTimes'
 
 type CustomInputProps = {
@@ -38,14 +38,14 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
         onBlur && onBlur(value)
     }
    
-    const handleDelete = (name:string) => {
-        onDelete && onDelete(name)
+    const handleDelete = (value:string) => {
+        onDelete && onDelete(value)
     }
 
     return (
         <>
         <HStack style={styles.stack}>
-            { !isRequired && <Switch size="sm" onThumbColor="white" onTrackColor="rgba(18, 53, 67, 0.69)" isChecked={isChecked} onValueChange={(e) => handleSwitchToggle(e)} /> }
+            { !isRequired && <Switch thumbColor="white" trackColor={{false:'rgba(18, 53, 67, 0.69)', true:'rgba(18, 53, 67, 0.69)'}} value={isChecked} onValueChange={(e) => handleSwitchToggle(e)} /> }
             {
                 !isCustom &&
                     <Input mx="3" w="70%"placeholder={placeholder} value={inputValue} onChangeText={(e:any) => setInputValue(e)} onEndEditing={(e: NativeSyntheticEvent<TextInputEndEditingEventData>) => handleTextChange(e.nativeEvent.text)} keyboardType={keyboardType} style={styles.textInput}/>
@@ -56,7 +56,7 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
                 </Text>
             }
             { isCustom && 
-                <Icon as={MaterialIcons} onPress={()=>handleDelete(name)} name="delete" size={8} color="rgba(18, 53, 67, 0.69)" top='0' left='1'/>
+                <Icon as={MaterialIcons} onPress={()=>handleDelete(value)} name="delete" size={8} color="rgba(18, 53, 67, 0.69)" top='0' left='1'/>
             }
         </HStack>
         </>
@@ -71,12 +71,16 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
         alignItems:'center',
         height:40,
         marginTop:10,
+        marginLeft: 16
     },
     textInput :{
         backgroundColor: "white",
         width: 235,
         height: 40,
         borderRadius: 5,
+    },
+
+  
         /*shadowColor: "#000",
        shadowOffset: {
            width: 0,
@@ -92,7 +96,7 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
        textAlignVertical: 'top',
        letterSpacing: 0.1,
        */
-       },
+       
     })
 
 export default CustomInput
