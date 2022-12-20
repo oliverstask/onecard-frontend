@@ -14,7 +14,6 @@ import { Icon, Input, Stack, Spinner } from "native-base";
 import { useDispatch, useSelector } from 'react-redux';
 import { settingsInfos, UserState } from '../reducers/user';
 import { storeUserAuthInfos, AuthState } from '../reducers/auth'
-import user from '../reducers/user';
 import { useRawData } from '@shopify/react-native-skia';
 export default function SignupScreen({
   route, navigation,
@@ -128,8 +127,8 @@ export default function SignupScreen({
     const response = await fetch(`https://onecard-backend.vercel.app/settings/${id}`)
     const userData = await response.json()
     const { firstName, lastName, email } = userData.user
-    const { phoneNumber, companyName, address, linkedin, website } = userData.user.userSettings
-    dispatch(settingsInfos({firstName, lastName, email, phoneNumber, companyName, address, linkedin, website}))
+    const { phoneNumber, companyName, address, linkedin, website, customs } = userData.user.userSettings
+    dispatch(settingsInfos({firstName, lastName, email, phoneNumber, companyName, address, linkedin, website, customs}))
     
   }
 

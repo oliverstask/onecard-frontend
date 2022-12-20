@@ -32,6 +32,7 @@ function CustomInput ({name, color, icon,value, placeholder, keyboardType = "def
         setIsChecked(!isChecked)
         onSwitch && onSwitch(status)
     }
+    
 
     const handleTextChange = (value:string) => {
         setInputValue(value)

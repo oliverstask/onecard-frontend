@@ -10,7 +10,7 @@ export type UserState = {
      firstName: string,
      lastName: string,
      email: string,
-     phone: SettingObject,
+     phoneNumber: SettingObject,
      companyName: SettingObject,
      address : SettingObject,
      linkedin : SettingObject,
@@ -18,17 +18,17 @@ export type UserState = {
      customArr: ArrObject [],
 };
 export type ArrObject = {
-  color: string,
+  
   icon: string,
   name: string,
-  infos: string | null,
+  url: string | null,
   switchOn: boolean,
 }
 
 
 const initialState: UserState = {
     firstName:'', lastName:'', email: '', 
-    phone:{
+    phoneNumber:{
       value:'',
       switchOn: false,
     },
@@ -59,17 +59,18 @@ export const userSlice = createSlice({
       state = initialState   
     },
     settingsInfos: (state, action) => {
-      const { firstName, lastName, email, phoneNumber, companyName, address, linkedin, website } = action.payload
+      const { firstName, lastName, email, phoneNumber, companyName, address, linkedin, website, customs } = action.payload
       state.firstName = firstName
       state.lastName = lastName
       state.email = email
-      state.phone.value = phoneNumber
-      state.companyName.value = companyName
-      state.address.value = address
-      state.linkedin.value = linkedin
-      state.website.value = website
+      state.phoneNumber = phoneNumber
+      state.companyName = companyName
+      state.address = address
+      state.linkedin = linkedin
+      state.website = website
+      state.customArr = customs
     },
-    updateFisrtName: (state, action: PayloadAction<string>) => {
+    updateFirstName: (state, action: PayloadAction<string>) => {
       state.firstName = action.payload;
     },
     updateLastName : (state, action: PayloadAction<string>) => {
@@ -78,8 +79,8 @@ export const userSlice = createSlice({
     updateEmail: (state, action: PayloadAction<string>) => {
       state.email = action.payload;
     },
-    updatePhone: (state, action: PayloadAction<SettingObject>) => {
-      state.phone = action.payload;
+    updatePhoneNumber: (state, action: PayloadAction<SettingObject>) => {
+      state.phoneNumber = action.payload;
     },
     updateCompanyName: (state, action: PayloadAction<SettingObject>) => {
       state.companyName = action.payload;
@@ -98,12 +99,13 @@ export const userSlice = createSlice({
       (!state.customArr ? state['customArr'] = [action.payload] : state.customArr.push(action.payload));
     },
     removeCustom : (state, action: PayloadAction<string>) => {
-      state.customArr = state.customArr.filter(e => e.infos !== action.payload);
+      state.customArr = state.customArr.filter(e => e.url !== action.payload);
     },
     updateCustom :(state, action: PayloadAction<ArrObject>) => {
        state.customArr.map((e,i) => {
         if(e.name === action.payload.name){
           state.customArr[i] = action.payload
+          console.log(state.customArr)
         }
       })
     }
@@ -113,5 +115,5 @@ export const userSlice = createSlice({
 
 
   
-export const { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, addCustom, removeCustom, updateCustom, settingsInfos, resetSettings  } = userSlice.actions;
+export const { updateFirstName, updateLastName, updateEmail, updatePhoneNumber,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, addCustom, removeCustom, updateCustom, settingsInfos, resetSettings  } = userSlice.actions;
 export default userSlice.reducer;

@@ -13,7 +13,7 @@ import { FunctionSetInputValue } from 'native-base/lib/typescript/components/com
 import { useSelector, useDispatch } from 'react-redux';
 
 
-import { updateFisrtName, updateLastName, updateEmail, updatePhone,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, UserState, SettingObject, ArrObject, addCustom, removeCustom} from "../reducers/user"
+import { updateFirstName, updateLastName, updateEmail, updatePhoneNumber,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, UserState,  ArrObject, addCustom, removeCustom} from "../reducers/user"
 
 
 import { logout, AuthState } from '../reducers/auth'
@@ -24,13 +24,14 @@ import { url } from 'inspector';
 
 function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     
+    
     const user = useSelector<{user:UserState}, UserState>((state) => state.user);
     
     const [firstName, setFirstName] = useState(user.firstName);
     const [lastName, setLastName] = useState(user.lastName);
     const [email, setEmail] = useState(user.email);
-    const [phone, setPhone] = useState<string>(user.phone.value);
-    const [phoneSwitch, setPhoneSwitch] = useState<boolean>(user.phone.switchOn);
+    const [phoneNumber, setPhoneNumber] = useState<string>(user.phoneNumber.value);
+    const [phoneSwitch, setPhoneSwitch] = useState<boolean>(user.phoneNumber.switchOn);
     const [companyName, setCompanyName] = useState<string>(user.companyName.value);
     const [companyNameSwitch, setCompanyNameSwitch] = useState<boolean>(user.companyName.switchOn);
     const [address, setAddress] = useState<string>(user.address.value);
@@ -40,48 +41,20 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     const [website, setWebsite] = useState<string>(user.website.value);
     const [websiteSwitch, setWebsiteSwitch] = useState<boolean>(user.website.switchOn);
 
-    const [custom, setCustom] = useState<ArrObject[]>([]);
+    // const [custom, setCustom] = useState<ArrObject[]>([]);
     const [showModal, setShowModal] = useState(false);
 
     const [name, setName] = useState('');
-    const [infos, setInfos] = useState('');
+    const [url, setUrl] = useState('');
+    const [icon, setIcon] = useState('')
+
     const [logoutState, setLogoutState] = useState(false)
 
-    const userId= useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
     const dispatch = useDispatch();
-    
-    const fetchUpdatedData = async (
-            isRequired:'required'|'userSettings',
-            field:'firstName'|'lastName'|'email'|'phoneNumber'|'address'|'companyName'|'website'|'linkedin'|'whatsApp'|'twitter'|'instagram'|'facebook'|'tiktok'|'resume',
-            value:string
-        ) => {
-           
 
-        const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${isRequired}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-             userId, 
-             valueToUpdate: field, 
-             newValue: value
-            })
-          })
-          const data = await fetchData.json()    
-    }
-   
-    
+    const userId= useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
     const customData = useSelector<{ user: UserState }, ArrObject[]>((state) => state.user.customArr);
-
-  
     const userToken = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.token)
-    
-
-//     const customData: any = useSelector(state, "ProfileInputs")
-
-
-// const customDisplay = ''
-    const customDisplay = customData.map((e:any, i:number) => 
-    <CustomInput key={i} name={e.name} color={e.color} icon={e.icon} value={e.infos} isCustom onDelete={(value) => handleDeleteCustomItem(value)} />)
 
     useEffect(() => {
         if (!userToken) {
@@ -90,10 +63,61 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
         }
     }, [logoutState])
 
-    useEffect(() => {
-        
-    }, [])
+    
 
+    const fetchUpdatedData = async (
+        isRequired:'required'|'userSettings',
+        field:string,
+        value:string | boolean
+    ) => {
+    
+        if (isRequired === 'required'){
+
+            const fetchData = await fetch('https://onecard-backend.vercel.app/settings/required', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    userId, 
+                    valueToUpdate: field, 
+                    newValue: value
+                })
+            })
+            const data = await fetchData.json() 
+            console.log(data)
+        }
+        if (isRequired === 'userSettings'){
+            if (typeof value === "string"){
+                const fetchData = await fetch('https://onecard-backend.vercel.app/settings/userSettings/value', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        userId, 
+                        valueToUpdate: field, 
+                        newValue: value
+                    })
+                })
+                const data = await fetchData.json() 
+                console.log('string')  
+                console.log(userId, field, value)    
+            } else {
+                const fetchData = await fetch('https://onecard-backend.vercel.app/settings/userSettings/switch', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        userId, 
+                        valueToUpdate: field, 
+                        newValue: value
+                    })
+                })
+                const data = await fetchData.json() 
+                console.log(userId, field, value)   
+            }
+        }
+    }
+
+
+
+    
 
     const handleDeleteCustomItem = async (value:string) => {
         console.log('PRE DELETE',value)
@@ -113,7 +137,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
 
     }
 
-    const handleFieldChange = (value: string, isRequired:'required'|'userSettings', type: 'firstName'|'lastName'|'email'|'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website') => {
+    const handleFieldChange = ( isRequired:'required'|'userSettings', type: 'firstName'|'lastName'|'email'|'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website', value: string) => {
         switch (type) {
             case 'firstName':
                 setFirstName(value)
@@ -137,8 +161,8 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
                 dispatch(updateLinkedin({ value, switchOn: linkedinSwitch }));
                 break;
             case 'phoneNumber':
-                setPhone(value)
-                dispatch(updatePhone({ value, switchOn: phoneSwitch }));
+                setPhoneNumber(value)
+                dispatch(updatePhoneNumber({ value, switchOn: phoneSwitch }));
                 break;
             case 'website':
                 setWebsite(value)
@@ -148,7 +172,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
         fetchUpdatedData(isRequired, type, value)
     }
 
-    const handleOptionnalFieldSwitch = (value: boolean, type: 'phone' | 'companyName' | 'address' | 'linkedIn' | 'website') => {
+    const handleOptionnalFieldSwitch = (value: boolean, type: 'phoneNumber' | 'companyName' | 'address' | 'linkedin' | 'website') => {
         switch (type) {
             case 'address':
                 setAddressSwitch(value)
@@ -158,41 +182,54 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
                 setCompanyNameSwitch(value)
                 dispatch(updateCompanyName({ value: companyName, switchOn: value }))
                 break;
-            case 'linkedIn':
+            case 'linkedin':
                 setLinkedinSwitch(value)
                 dispatch(updateLinkedin({ value: linkedin, switchOn: value }))
                 break;
-            case 'phone':
+            case 'phoneNumber':
                 setPhoneSwitch(value)
-                dispatch(updatePhone({ value: phone, switchOn: value }))
+                dispatch(updatePhoneNumber({ value: phoneNumber, switchOn: value }))
                 break;
             case 'website':
                 setWebsiteSwitch(value)
                 dispatch(updateWebsite({ value: website, switchOn: value }))
                 break;
         }
+        fetchUpdatedData('userSettings', type, value)
     }
 
 
     const handleCustom = async () => {
-         dispatch(addCustom({name, infos, switchOn:false}))
+         dispatch(addCustom({name, icon, url, switchOn:false}))
          setShowModal(false)
         
          const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/customs`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-             userId, 
-            name,
-            url: infos,
-            color: 'color',
-            icon: 'icon'
+            body: JSON.stringify({ 
+                userId, 
+                name,
+                url,
+                color: 'color',
+                icon: 'icon',
+                switchOn: false
             })
           })
           const data = await fetchData.json()    
 
     }   
-
+    const fetchCustomSwitch = async (url: string, switchOn: boolean) => {
+        console.log(switchOn)
+        console.log(url)
+        const fetchSwitch = await fetch("https://onecard-backend.vercel.app/settings/customs", {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({userId, url, switchOn})
+        })
+        const response = await fetchSwitch.json()
+        console.log(response)
+    }
+    
 
     const handleLogout = () => {
         dispatch(logout())
@@ -200,6 +237,20 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
         setLogoutState(!logoutState)
 
     }
+
+    const customDisplay = customData.map((e:any, i:number) => {
+        return <CustomInput 
+            key={i} 
+            name={e.name} 
+            color={e.color} 
+            icon={e.icon} 
+            value={e.url} 
+            isCustom 
+            isActive={e.switchOn}
+            onDelete={(value) => handleDeleteCustomItem(value)} 
+            onSwitch={(status)=>fetchCustomSwitch(e.url, status)}
+        />
+    })
 
 
 return (
@@ -216,9 +267,9 @@ return (
                <View style={styles.profileR}>
                 
                 
-                 <CustomInput isRequired name='' color='' icon='' value={user.firstName} placeholder='Fisrt name' onBlur={(value) => fetchUpdatedData('required','firstName', firstName )} />
-                 <CustomInput isRequired name='' color='' icon='' value={user.lastName} placeholder='Last name' onBlur={(value) => fetchUpdatedData('required', 'lastName', lastName)} />
-                 <CustomInput isRequired name='' color='' icon='' value={user.email} placeholder='Email' onBlur={(value) => fetchUpdatedData('required', 'email', email)} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.firstName} placeholder='Fisrt name' onBlur={(value) => handleFieldChange('required','firstName', value )} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.lastName} placeholder='Last name' onBlur={(value) => handleFieldChange('required', 'lastName', value)} />
+                 <CustomInput isRequired name='' color='' icon='' value={user.email} placeholder='Email' onBlur={(value) => handleFieldChange('required', 'email', value)} />
                 
                  
       
@@ -232,11 +283,11 @@ return (
         <View >
               <View style={styles.profile}>
 
-              <CustomInput name='' color='' icon='' isActive={user.phone.switchOn} value={user.phone.value ? user.phone.value : ''} placeholder='Phone' onBlur={(value) => handleFieldChange(value,'userSettings','phoneNumber')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'phone')} />
-              <CustomInput name='' color='' icon='' isActive={user.companyName.switchOn} value={user.companyName.value ? user.companyName.value: ''} placeholder='Company name' onBlur={(value) => handleFieldChange(value,'userSettings','companyName')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'companyName')} />
-              <CustomInput name='' color='' icon='' isActive={user.address.switchOn} value={user.address.value ? user.address.value: ''} placeholder='Address' onBlur={(value) => handleFieldChange(value,'userSettings','address')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'address')}/>
-              <CustomInput name='' color='' icon='' isActive={user.linkedin.switchOn} value={user.linkedin.value ? user.linkedin.value: ''} placeholder='LinkedIn' onBlur={(value) => handleFieldChange(value,'userSettings','linkedin')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'linkedIn')} />
-              <CustomInput name='' color='' icon='' isActive={user.website.switchOn} value={user.website.value ? user.website.value: ''} placeholder='Website' onBlur={(value) => handleFieldChange (value,'userSettings','website')} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'website')}/>
+              <CustomInput name='' color='' icon='' isActive={user.phoneNumber.switchOn} value={user.phoneNumber.value} placeholder='Phone' onBlur={(value) => handleFieldChange('userSettings','phoneNumber', value)} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'phoneNumber')} />
+              <CustomInput name='' color='' icon='' isActive={user.companyName.switchOn} value={user.companyName.value } placeholder='Company name' onBlur={(value) => handleFieldChange('userSettings','companyName', value)} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'companyName')} />
+              <CustomInput name='' color='' icon='' isActive={user.address.switchOn} value={user.address.value } placeholder='Address' onBlur={(value) => handleFieldChange('userSettings','address', value)} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'address')}/>
+              <CustomInput name='' color='' icon='' isActive={user.linkedin.switchOn} value={user.linkedin.value } placeholder='LinkedIn' onBlur={(value) => handleFieldChange('userSettings','linkedin', value)} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'linkedin')} />
+              <CustomInput name='' color='' icon='' isActive={user.website.switchOn} value={user.website.value } placeholder='Website' onBlur={(value) => handleFieldChange ('userSettings','website',value)} onSwitch = {(value) => handleOptionnalFieldSwitch(value,'website')}/>
                </View>
 
         
@@ -258,7 +309,7 @@ return (
             </FormControl>
             <FormControl mt="3">
               <FormControl.Label>Infos</FormControl.Label>
-              <TextArea h={20} w="100%" maxW="300" autoCompleteType={undefined} onChangeText={(value) => setInfos(value)}/>
+              <TextArea h={20} w="100%" maxW="300" autoCompleteType={undefined} onChangeText={(value) => setUrl(value)}/>
             </FormControl>
           </Modal.Body>
           <Modal.Footer>
@@ -284,13 +335,13 @@ return (
       </Pressable>
       <Text style={styles.addcus}>Add custom infos..</Text>
         </HStack>
-        <View >
 
+        <View>
+ 
+         {customDisplay}
+        
+       
 
-         {/* <CustomInput name='' color='' icon='' value='' isCustom placeholder='Website' onBlur={(value) => setWebsite(value)} onDelete={handleDeleteCustomItem} />  */}
-       
-        {customDisplay}
-       
         </View>
         </NativeBaseProvider>
         
