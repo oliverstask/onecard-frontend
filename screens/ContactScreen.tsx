@@ -1,39 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { NativeBaseProvider, Box,Text, IconButton, Icon, View, ScrollView, Modal, Button, Radio, Input} from "native-base";
+import { Text, IconButton, Icon, View, Modal, Radio, Input, Box, FlatList, HStack, Avatar, VStack, Spacer} from "native-base";
 import * as RootNavigation from '../utils/RootNavigation'
 import AppBar from "../components/AppBar";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Pressable } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import Contact from "../components/Contacts";
 import { BlurView} from "expo-blur";
-import { useSelector } from 'react-redux'
-import { AuthState } from '../reducers/auth'
+import { useSelector } from 'react-redux';
+import { AuthState } from '../reducers/auth';
 
 export default function ContactScreen() {
-
+  const [searchTerm, setSearchTerm] = useState('');
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("one");
-  
- 
-    const fetchContactList = async() => {
-      const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
-      const response = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-      const contactInfos = await response.json()
+  const [contactData, setContactData] = useState<any[]>([]);
+  const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
+
+  useEffect(() => {
+    
+    (async () => {
       //console.log(userId)
-      const dataArr = contactInfos.contacts.map((e:any, i:any)=> {
-        const {firstName, lastName} = e.userId
-        const {qrName} = e.qrId
-        const fullName = [firstName, lastName].join(' ')
-        return {id: i, fullName, recentText: qrName, avatarUrl: 'testurl'}
+      fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+    
+    .then(response => response.json())
+    .then(data => { 
+      setContactData(data.contacts)
+    });
+  })();
+  }, []);
+  
+  const handleSearch = (text:any) => {
+    setSearchTerm(text);
+  };
 
-      })
-      console.log(dataArr)
-    }
- 
-    fetchContactList()
-
+  const filteredContacts = contactData.filter((e) =>
+    e.userId.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    e.userId.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
   <>
@@ -42,39 +46,78 @@ export default function ContactScreen() {
   
  
   <SafeAreaView style={styles.container}>
-  <View style={styles.options}>
-  <Pressable
-       style={styles.button2}
-      onPress={() => setOpen(true)}
-      >
-      <IconButton icon={<Icon as={MaterialIcons} name="sort" size="4" color="#285D73"/>}/>
-      <Text style={styles.textButton2}>Sort</Text>
-    </Pressable>
-    <Input placeholder="Search" 
-    variant="filled" 
-    width="55%" 
-    height={"98%"} 
-    borderRadius="5" 
-    py="1" 
-    px="2"
-    backgroundColor={"white"}
-    borderColor={"#285D73"}
-    color="#788F99"
-    fontSize={15}
-    bottom={"167%"}
-    left={"10%"}
-    InputLeftElement={<Icon m="2" ml="3" size="6" color="gray.400" as={<MaterialIcons name="search" />} />} />
+    <View style={styles.options}>
+      <Pressable
+        style={styles.button2}
+        onPress={() => setOpen(true)}
+        >
+          <Icon as={MaterialIcons} 
+            name="filter-alt" 
+            size="6" 
+            color="#285D73"/>
+              <Text style={styles.textButton2}>
+                Sort
+              </Text>
+      </Pressable>
+                <Input placeholder="Search" 
+                variant="filled" 
+                width="55%" 
+                height={"98%"} 
+                borderRadius="5" 
+                py="1" 
+                px="2"
+                backgroundColor={"white"}
+                borderColor={"#285D73"}
+                color="#788F99"
+                fontSize={15}
+                bottom={"167%"}
+                left={"10%"}
+                InputLeftElement={<Icon m="2" ml="3" size="6" color="gray.400" as={<MaterialIcons name="search" />} />} 
+                onChangeText={handleSearch}
+                value={searchTerm}    />
   </View>
   
-    <Pressable
-       style={styles.button}
-      onPress={() => RootNavigation.navigate('Map')}
-      >
-      <IconButton icon={<Icon as={MaterialIcons} name="location-pin" size="4" color="white"/>}/>
-      <Text style={styles.textButton}>Map</Text>
-    </Pressable>
-    <View bottom='10'>
-            <Contact/>
+  <Pressable
+    style={styles.button}
+    onPress={() => RootNavigation.navigate('Map')}
+  >
+      <IconButton 
+        icon={<Icon as={MaterialIcons} 
+        name="location-pin" 
+        size="4" 
+        color="white"/>}/>
+          <Text style={styles.textButton}>
+            Map
+          </Text>
+  </Pressable>
+  <View bottom='10'>
+    <Box top="10">
+      <FlatList  data={filteredContacts} renderItem={({item}) => {
+          
+          console.log(item)
+          return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.qrId._id})}>
+           <Box borderBottomWidth="1"
+            borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
+              <HStack space={[2, 3]} justifyContent="space-between">
+                 <Avatar size="48px" source={{
+                         uri: item.avatarUrl
+                  }} />
+                    <VStack>
+                      <Text color="coolGray.800" bold>
+                        {item.userId.firstName} {item.userId.lastName}
+                      </Text>
+                       <Text color="coolGray.600" >
+                             {item._id}
+                       </Text>
+                     </VStack>
+                  <Spacer />
+              <Text fontSize="xs"color="coolGray.800" alignSelf="flex-start">
+                {item.date}
+              </Text>
+            </HStack>
+          </Box>
+          </Pressable>)} }keyExtractor={item => item.id} />
+    </Box>
           
             </View>
   </SafeAreaView>
