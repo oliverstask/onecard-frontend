@@ -26,6 +26,7 @@ import { Provider } from 'react-redux';
 import { combineReducers, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import user from './reducers/user';
 import auth from './reducers/auth';
+import qr from './reducers/qr'
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import AppBar from './components/AppBar';
 import { Icon, IconButton, NativeBaseProvider } from 'native-base';
@@ -52,7 +53,7 @@ export type BottomParamList = {
 const Stack = createNativeStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator<BottomParamList>();
 
-const reducers = combineReducers({user, auth});
+const reducers = combineReducers({user, auth, qr});
 const persistConfig = {
   key: 'oneCard', 
   storage: AsyncStorage

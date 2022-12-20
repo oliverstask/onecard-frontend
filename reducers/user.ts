@@ -96,7 +96,7 @@ export const userSlice = createSlice({
       (!state.customArr ? state['customArr'] = [action.payload] : state.customArr.push(action.payload));
     },
     removeCustom : (state, action: PayloadAction<string>) => {
-      state.customArr = state.customArr.filter(e=> e?.infos !== action.payload);
+      state.customArr = state.customArr.filter(e => e.infos !== action.payload);
     },
     updateCustom :(state, action: PayloadAction<ArrObject>) => {
        state.customArr.map((e,i) => {
