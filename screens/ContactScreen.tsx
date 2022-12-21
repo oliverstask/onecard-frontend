@@ -15,44 +15,37 @@ export default function ContactScreen() {
   const [order, setOrder] = useState<'az'|'date'>('az')
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("one");
-  const [contactData, setContactData] = useState<any[]>([]);
+  const [contactData, setContactData] = useState<any[]>();
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
 
     
   useEffect(() => {
     (async () => {
-
-      
-      fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-    
-    .then(response => response.json())
-    
+    fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+    .then(response => response.json()).then()
     .then(data => {
-      if (data) {
-        data.contacts.forEach((element:any) => {
-          fetch(`https://onecard-backend.vercel.app/qrs/qr/${element.qrId._id}`)
-          .then(response => response.json())
-          .then(qrData => {
-            const contact = {
-              id: element.qrId._id,
-              firstName: qrData.responseArr.find((o:any) => !!o['firstName'])['firstName'],
-              lastName: qrData.responseArr.find((o:any) => !!o['lastName'])['lastName'],
-              date: element.date
-            }
-            //const getId = contactData.find(_id);
-            
-           
-              setContactData([...contactData, contact])
-            
-              console.log(contactData[0].id)
-            
-          })
-        });
-      }
-    })
+      console.log(data)
+       if (data) {
+        data.response.forEach(async (element:any) => {
+        
+           const contact = {
+             id: element.transaction.qrId._id,
+             firstName: element.contactName.firstName,
+             lastName: element.contactName.lastName,
+             date: element.transaction.date
+           }
+           contactData && contactData.find((o) => { return o.id === contact.id}) && setContactData([...contactData, contact])
+           !contactData && setContactData([contact])
+         })
+       }
+     })
   })();
 
   }, []);
+
+   /* useEffect(() => {
+      console.log(contactData)
+    },[contactData])*/
   
  
 
@@ -60,10 +53,10 @@ export default function ContactScreen() {
     setSearchTerm(text);
   };
 
-  let filteredContacts = contactData.filter((e) =>
-    e.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    e.lastName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // let filteredContacts = contactData.filter((e) =>
+  //   e.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   e.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
   /*filteredContacts = 
   (order === 'az' ? filteredContacts.sort((a,b)=>{
@@ -134,7 +127,7 @@ filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - n
   </Pressable>
   <View bottom='10'>
     <Box top="10">
-      <FlatList  data={filteredContacts} renderItem={({item}) => {
+      <FlatList  data={contactData} renderItem={({item}) => {
           
           
           return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.id})}>

@@ -8,8 +8,7 @@ const DetailsScreen = ({route}:any) => {
     // const qrId = '63a042da2b185ed67060d0ea'
     
 
-    const [data, setData] = useState([])
-    
+    const [data, setData] = useState<string[]>([])
 
     
 

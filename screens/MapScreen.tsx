@@ -1,13 +1,15 @@
-import { Button, StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import AppBar from '../components/AppBar';
 import * as Location from 'expo-location';
 import * as RootNavigation from '../utils/RootNavigation'
-import MapView, { LatLng, Marker } from 'react-native-maps';
+import MapView, { Callout, LatLng, Marker } from 'react-native-maps';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../reducers/auth';
+import { ItemClick } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
+import { Popover, Button} from 'native-base';
 
 
 
@@ -19,6 +21,7 @@ export default function MapScreen() {
   const [contactName, setContactName] = useState<string[]>([]);
   const [ newMap, setNewMap] = useState<LatLng[]>([]);
   const [ newQrId, setNewQrId] = useState<string[]>([])
+  const [ newDate, setNewDate ] = useState<string>('')
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -43,23 +46,39 @@ export default function MapScreen() {
     .then(response => response.json())
     .then(data => {
       if (data) {
-        data.contacts.forEach((element:any) => {
-          fetch(`https://onecard-backend.vercel.app/qrs/qr/${element.qrId._id}`)
-          .then(response => response.json())
-          .then(qrData => {
+        console.log(data)
+         data.response.forEach((element:any) => {
+        //  
+         const oDate = element.transaction.date
             
-            
-            setNewMap([...newMap, {longitude:element.location.lon, latitude:element.location.lat}])
-            setContactName([...contactName, `${qrData.responseArr.find((o:any) => !!o['firstName'])['firstName']} ${qrData.responseArr.find((o:any) => !!o['lastName'])['lastName']}`])
-            setNewQrId([...newQrId, `${qrData.responseArr.find((o:any) => !!o['id'])['id']}`])
+           setNewMap([...newMap, {longitude:element.transaction.location.lon, latitude:element.transaction.location.lat}])
+           setContactName([...contactName, `${element.contactName.firstName} ${element.contactName.lastName}`])
+           setNewQrId([...newQrId, `${element.transaction._id}`])
+           setNewDate(element.transaction.date)
           })
-        });
+        // });
       }
     })
   },[]);
-
+  
+  
+ 
   const markers = newMap.map((e,i) => {
-    return <Marker coordinate={{ latitude: e.latitude, longitude: e.longitude }} title={contactName[i]} onPress={() => RootNavigation.navigate('Details', {newQrId})}/>
+    return (
+      <Marker pinColor={'random'}
+        coordinate={{ latitude: e.latitude, longitude: e.longitude }}
+        title={contactName[i]} 
+        // onPress={() => RootNavigation.navigate('Details', {newQrId})}
+        >
+          <Callout>
+            <View>
+              <Text style={styles.textButton1}>{contactName[i]}</Text>
+              <Text>You've met on the {new Date(newDate).toLocaleDateString()} </Text>
+              <Button style={styles.button1} onPress={() => RootNavigation.navigate('Details', {newQrId})}>Contact details</Button>
+            </View>
+          </Callout>
+        </Marker>
+    )
   })
 
   return (
@@ -132,4 +151,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 15,
   },
+  button1: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingTop: 8,
+    marginTop: 20,
+    width: 235,
+    height: 40,
+    backgroundColor: '#5F038A',
+    borderRadius: 5,
+    shadowColor: 'rgba(0, 0, 0, 0.25)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  textButton1: {
+    color: 'black',
+    fontFamily: 'Futura',
+    height: 30,
+    fontWeight: '600',
+    fontSize: 16,
+      }
 });
