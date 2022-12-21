@@ -2,7 +2,7 @@ import AppBar from '../components/AppBar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { BottomParamList, StackParamList } from '../App';
-import { StyleSheet, Text, View, SafeAreaView, Image, TextInput, Pressable, AsyncStorage, } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView,  TextInput, Pressable } from 'react-native';
 
 
 import React, { useState, useEffect } from 'react';
@@ -11,7 +11,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Switch, HStack, Center, NativeBaseProvider, Divider, Box, Icon, ScrollView, Button, Modal, FormControl, Input, TextArea, } from "native-base";
 import { FunctionSetInputValue } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { addQr, QrObject } from '../reducers/qr'
 
 import { updateFirstName, updateLastName, updateEmail, updatePhoneNumber,  updateCompanyName, updateAddress,  updateLinkedin, updateWebsite, UserState,  ArrObject, addCustom, removeCustom} from "../reducers/user"
 
@@ -49,6 +49,8 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     const [icon, setIcon] = useState('')
 
     const [logoutState, setLogoutState] = useState(false)
+    const [qrName, setQrName] = useState('')
+    const [qrMessage, setQrMessage] = useState('')
 
     const dispatch = useDispatch();
 
@@ -237,8 +239,44 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
         setLogoutState(!logoutState)
 
     }
+   
+    const handleGenerate = async() => {
+        if (!qrName){
+            return setQrMessage('Please choose a name for your new qr')
+        }
+        let infos: string[] = []
+        Object.entries(user).forEach((e) =>{
+            
+            if (e[0] !== 'firstName' && e[0] !== 'lastName' && e[0] !== 'email' && e[0] && e[0] !== 'customArr'){
+            //@ts-ignore  
+                if (e[1].switchOn){
+                    infos.push(e[0])
+                }
+            } else if (e[0] === 'customArr') {
+                const customs  = user.customArr
+            customs.forEach((e)=> {
+                if (e.switchOn){
+                    infos.push(e.name)
+                }
+             })
+            }
+        })
+        
+       const fetchQr = await fetch("https://onecard-backend.vercel.app/qrs/newQr", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({userId, infos, qrName})
+        })
+        const response = await fetchQr.json()
+        console.log(response)
+        dispatch(addQr(response.newQr))
+        setQrName('')
+        setQrMessage('')
+    }
 
+ 
     const customDisplay = customData.map((e:any, i:number) => {
+        console.log(e.url)
         return <CustomInput 
             key={i} 
             name={e.name} 
@@ -348,6 +386,14 @@ return (
         <Pressable onPress={()=>handleLogout()} style={{marginBottom: 20}}>
             <Text>Logout</Text>
         </Pressable>
+        {/* <TextInput placeholder='Give your qr a name' onChange={(value)=> setQrName(value)}/> */}
+        <View style={styles.generate}>
+            <Input placeholder='Give your Qr a name' onChangeText={(value)=> setQrName(value)} value={qrName}/>
+            <Text>{qrMessage}</Text>
+            <Pressable onPress={()=>handleGenerate()}>
+                <Text>Generate QR code</Text>
+            </Pressable>
+        </View>
        </SafeAreaView>
        </ScrollView>
        </>
@@ -411,7 +457,10 @@ const styles = StyleSheet.create({
         left: 7,
 
     },
-
+    generate: {
+        alignItems: 'center',
+        marginBottom: 50
+    }
 
 
 })
