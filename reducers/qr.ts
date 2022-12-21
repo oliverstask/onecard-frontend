@@ -30,15 +30,16 @@ export const qrSlice = createSlice({
         addQr: (state, action: PayloadAction<QrObject>)=> {
             state.value.push(action.payload)
         }, 
-        changeFav:(state, action: PayloadAction<string[]>)=>{
-            state.value = state.value.map((e)=> {
-                if (e._id = action.payload[0]){
-                    return {...e, isFav: action.payload[1]}
-                } 
-                return {...e, isFav: false}
-            })
-
-            console.log('fav--------',state.value)
+        changeFav:(state, action: PayloadAction<string>)=>{
+            state.value.map((e)=>{
+                if (e._id === action.payload){
+                    e.isFav = !e.isFav
+                } else {
+                    e.isFav = false
+                }
+            } );
+            
+            
         }
         
      }

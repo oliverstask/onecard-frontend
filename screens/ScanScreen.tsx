@@ -90,6 +90,7 @@ export default function SnyBarCodeScanner(props: IProps, {
     onScan && onScan(data);
     setScanned(true);
     const contact: any = await (await fetch(data)).json()
+    console.log(contact)
     const arr = contact.responseArr
     
     const qrId = data.replace('https://onecard-backend.vercel.app/qrs/qr/','')
