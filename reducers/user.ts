@@ -105,7 +105,7 @@ export const userSlice = createSlice({
        state.customArr.map((e,i) => {
         if(e.name === action.payload.name){
           state.customArr[i] = action.payload
-          console.log(state.customArr)
+          
         }
       })
     }

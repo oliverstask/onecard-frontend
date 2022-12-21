@@ -176,7 +176,7 @@ export default function SignupScreen({
           navigation.navigate('TabNavigator')
           setIsLoading(false)
         } else {
-      console.log(data.message)
+      
       setSignUpMessage(data.message)
       setIsLoading(false)
     

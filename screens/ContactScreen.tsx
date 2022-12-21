@@ -33,23 +33,28 @@ export default function ContactScreen() {
           fetch(`https://onecard-backend.vercel.app/qrs/qr/${element.qrId._id}`)
           .then(response => response.json())
           .then(qrData => {
-            console.log(qrData)
             const contact = {
               id: element.qrId._id,
               firstName: qrData.responseArr.find((o:any) => !!o['firstName'])['firstName'],
               lastName: qrData.responseArr.find((o:any) => !!o['lastName'])['lastName'],
               date: element.date
             }
-            setContactData([...contactData, contact])
+            //const getId = contactData.find(_id);
+            
+           
+              setContactData([...contactData, contact])
+            
+              console.log(contactData[0].id)
+            
           })
         });
       }
     })
   })();
-  
+
   }, []);
   
-  
+ 
 
   const handleSearch = (text:any) => {
     setSearchTerm(text);
@@ -60,7 +65,7 @@ export default function ContactScreen() {
     e.lastName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  filteredContacts = 
+  /*filteredContacts = 
   (order === 'az' ? filteredContacts.sort((a,b)=>{
     if(a.firstName > b.firstName){
         return 1;
@@ -71,7 +76,7 @@ export default function ContactScreen() {
     return 0;
 }) : 
 filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0)))
-
+*/
 
 
 
