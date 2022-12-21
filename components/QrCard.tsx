@@ -9,12 +9,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { deleteQr, changeFav, QrState, QrObject } from '../reducers/qr'
 import { useDispatch } from 'react-redux'
 const QrCard = (props: any) => {
-  const [fav, setFav] = useState(props.isFav)
+  // const [fav, setFav] = useState(props.isFav)
 
   const userId = useSelector<{auth:AuthState}, string>((state)=> state.auth.value.userId)
-
+  // const qr = useSelector((state)=> state.qr.value)
+  const {isFav} = props
+  console.log(props)
   let starIcon
-  fav ? starIcon = 'star' : starIcon = 'star-o'
+  isFav ? starIcon = 'star' : starIcon = 'star-o'
   const qrId = props.qrId
  
   const dispatch = useDispatch()
@@ -22,8 +24,7 @@ const QrCard = (props: any) => {
   
 
   const handleFav = async() => {
-    dispatch(changeFav([qrId, fav]))
-    setFav(!fav)
+    // dispatch(getAllQrs()
     const response = await(await fetch('https://onecard-backend.vercel.app/qrs/fav', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -33,7 +34,7 @@ const QrCard = (props: any) => {
         })
     })).json()
     console.log(response)
-    
+    dispatch(changeFav(qrId))
   }
 
   const handleDelete = async() => {

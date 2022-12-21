@@ -17,18 +17,23 @@ import { AuthState } from '../reducers/auth';
 export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
   const qrList = useSelector<{qr:QrState}>((state)=> state.qr.value)
-  console.log(qrList)
+
   
   
   // useEffect(()=> {
-  //   (async()=> {
-   
-
-  // })()
-  // },[])
-  
-  //@ts-ignore
-  const list = qrList.map((data: any,i)=> {
+    //   (async()=> {
+      
+      
+      // })()
+      // },[])
+      
+      
+      console.log(qrList)
+      const copyList = [...qrList]
+      const list = copyList.sort((a, b)=> {
+          return a.isFav? -1 : 1;
+        })
+  .map((data: any,i)=> {
     
 
     // if (i === 0){

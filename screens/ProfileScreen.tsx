@@ -223,13 +223,14 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
     const fetchCustomSwitch = async (url: string, switchOn: boolean) => {
         console.log(switchOn)
         console.log(url)
+        console.log(userId)
         const fetchSwitch = await fetch("https://onecard-backend.vercel.app/settings/customs", {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify({userId, url, switchOn})
         })
         const response = await fetchSwitch.json()
-        console.log(response)
+        
     }
     
 
