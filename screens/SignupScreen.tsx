@@ -14,6 +14,7 @@ import { Icon, Input, Stack, Spinner } from "native-base";
 import { useDispatch, useSelector } from 'react-redux';
 import { settingsInfos, UserState } from '../reducers/user';
 import { storeUserAuthInfos, AuthState } from '../reducers/auth'
+import { QrState, QrObject, getAllQrs } from '../reducers/qr'
 import { useRawData } from '@shopify/react-native-skia';
 export default function SignupScreen({
   route, navigation,
@@ -97,6 +98,7 @@ export default function SignupScreen({
         const data = await fetchData.json()
         dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
         storeUserSettingsInfos(data.userId)
+        storeUserQrList(data.userId)
         }
       })()
   },[googleResponse])
@@ -119,6 +121,7 @@ export default function SignupScreen({
         const data = await fetchData.json()
         dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
         storeUserSettingsInfos(data.userId)
+        storeUserQrList(data.userId)
       }
     })()
   }, [fbResponse])
@@ -131,7 +134,11 @@ export default function SignupScreen({
     dispatch(settingsInfos({firstName, lastName, email, phoneNumber, companyName, address, linkedin, website, customs}))
     
   }
-
+  const storeUserQrList = async(id: string)=> {
+    const response = await fetch(`https://onecard-backend.vercel.app/qrs/user/${id}`)
+    const userQrs = await response.json()
+    dispatch(getAllQrs(userQrs.qrList))
+  }
 
 
   const handleSignup = async () => {
@@ -165,6 +172,7 @@ export default function SignupScreen({
       } else if (data?.result){
           dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
           storeUserSettingsInfos(data.userId)
+          storeUserQrList(data.userId)
           navigation.navigate('TabNavigator')
           setIsLoading(false)
         } else {
@@ -190,6 +198,7 @@ export default function SignupScreen({
         if (data?.result){
           dispatch(storeUserAuthInfos({token: data.token, userId: data.userId}))
           storeUserSettingsInfos(data.userId)
+          storeUserQrList(data.userId)
           navigation.navigate('TabNavigator')
           setModalVisible(false)
           setIsLoading(false)

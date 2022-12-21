@@ -5,7 +5,7 @@ import QrCard from '../components/QrCard';
 
 const OtherQrs = (props: any) => {
     const [modalVisible, setModalVisible] = useState(false)
-    console.log('otherqr-------', props.qrId)
+    
   return (
     <View style={{alignItems: 'center'}}>
         <Text style={{fontSize: 30, marginBottom: 20}}>{props.qrName}</Text>
