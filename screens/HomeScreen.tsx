@@ -30,6 +30,7 @@ export default function HomeScreen() {
       
       
       console.log(qrList)
+      //@ts-ignore
       const copyList = [...qrList]
       const list = copyList.sort((a, b)=> {
           return a.isFav? -1 : 1;
@@ -59,7 +60,9 @@ export default function HomeScreen() {
           <IconButton  icon={<Icon as={MaterialIcons} name="person" size="10" color="white" top='-5'/>} onPress={() => RootNavigation.navigate('Profile')} />
         </View>
         <View style={styles.qrContainer}>
-        <Carousel<QrObject> data={qrList}
+        <Carousel<QrObject> 
+          //@ts-ignore
+        data={qrList}
         width={Dimensions.get('window').width}
         height={(Dimensions.get('window').width * 1.33)}
           renderItem={({item}) => {
