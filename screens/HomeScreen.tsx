@@ -1,4 +1,4 @@
-import {  StyleSheet, Text, View, SafeAreaView, ScrollView, Pressable} from 'react-native';
+import {  StyleSheet, Text, View, SafeAreaView, ScrollView, Pressable, Dimensions} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as RootNavigation from '../utils/RootNavigation'
 import { MaterialIcons } from "@expo/vector-icons";
@@ -11,13 +11,16 @@ import OtherQrs from '../components/OtherQrs';
 import {QrObject, QrState} from '../reducers/qr'
 import { useSelector } from 'react-redux';
 import { AuthState } from '../reducers/auth';
+import Carousel from "react-native-reanimated-carousel";
 
 
 
 export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
-  const qrList = useSelector<{qr:QrState}>((state)=> state.qr.value)
-  
+
+  const qrList:any = useSelector<{qr:QrState}>((state)=> state.qr.value)
+  console.log(qrList)
+
   
   
   // useEffect(()=> {
@@ -53,8 +56,13 @@ export default function HomeScreen() {
           <IconButton  icon={<Icon as={MaterialIcons} name="person" size="10" color="white" top='-5'/>} onPress={() => RootNavigation.navigate('Profile')} />
         </View>
         <View style={styles.qrContainer}>
+        <Carousel<QrObject> data={qrList}
+        width={Dimensions.get('window').width}
+        height={(Dimensions.get('window').width * 1.33)}
+          renderItem={({item}) => {
+            return <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav}/>
+          }} />
 
-          {list}
         </View>
         {/* <Pressable 
         style={{marginTop: 300, alignItems: 'center'}}
