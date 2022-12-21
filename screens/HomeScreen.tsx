@@ -17,7 +17,7 @@ import { AuthState } from '../reducers/auth';
 export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
   const qrList = useSelector<{qr:QrState}>((state)=> state.qr.value)
-  console.log(qrList)
+  
   
   
   // useEffect(()=> {
