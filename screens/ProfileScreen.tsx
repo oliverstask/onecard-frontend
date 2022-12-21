@@ -43,6 +43,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
 
     // const [custom, setCustom] = useState<ArrObject[]>([]);
     const [showModal, setShowModal] = useState(false);
+    const [showQrModal, setShowQrModal] = useState(false);
 
     const [name, setName] = useState('');
     const [url, setUrl] = useState('');
@@ -85,7 +86,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
                 })
             })
             const data = await fetchData.json() 
-            console.log(data)
+            
         }
         if (isRequired === 'userSettings'){
             if (typeof value === "string"){
@@ -99,8 +100,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
                     })
                 })
                 const data = await fetchData.json() 
-                console.log('string')  
-                console.log(userId, field, value)    
+                   
             } else {
                 const fetchData = await fetch('https://onecard-backend.vercel.app/settings/userSettings/switch', {
                     method: 'PUT',
@@ -112,7 +112,7 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
                     })
                 })
                 const data = await fetchData.json() 
-                console.log(userId, field, value)   
+                  
             }
         }
     }
@@ -268,15 +268,17 @@ function ProfileScreen({navigation} : NativeStackScreenProps<BottomParamList>) {
             body: JSON.stringify({userId, infos, qrName})
         })
         const response = await fetchQr.json()
+       
         console.log(response)
         dispatch(addQr(response.newQr))
         setQrName('')
         setQrMessage('')
+        setShowQrModal(false)
     }
 
  
     const customDisplay = customData.map((e:any, i:number) => {
-        console.log(e.url)
+        
         return <CustomInput 
             key={i} 
             name={e.name} 
@@ -382,17 +384,33 @@ return (
 
         </View>
         </NativeBaseProvider>
-        
-        <Pressable onPress={()=>handleLogout()} style={{marginBottom: 20}}>
-            <Text>Logout</Text>
-        </Pressable>
+       
         {/* <TextInput placeholder='Give your qr a name' onChange={(value)=> setQrName(value)}/> */}
         <View style={styles.generate}>
-            <Input placeholder='Give your Qr a name' onChangeText={(value)=> setQrName(value)} value={qrName}/>
-            <Text>{qrMessage}</Text>
-            <Pressable onPress={()=>handleGenerate()}>
-                <Text>Generate QR code</Text>
+            <Pressable onPress={()=> setShowQrModal(true)} style={styles.button}>
+                <Text style={styles.textButton}>Generate QR code</Text>
             </Pressable>
+        </View>
+
+        <Modal isOpen={showQrModal} onClose={() => setShowQrModal(false)}>
+        <Modal.Content maxWidth="400px" >
+          <Modal.CloseButton />
+          <Modal.Header>Your New QR</Modal.Header>
+          <Modal.Body>
+          <Input placeholder='Give your Qr a name' onChangeText={(value)=> setQrName(value)} value={qrName}/>
+            <Text>{qrMessage}</Text>
+            <Pressable onPress={()=>handleGenerate()} style={styles.button}>
+                <Text style={styles.textButton}>Generate QR code</Text>
+            </Pressable>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal>
+        
+        <View style={styles.upDiv}>
+        <Divider my={3} width='100%' backgroundColor='#788F99' />
+        <Pressable onPress={()=>handleLogout()} style={styles.buttonIn}>
+            <Text style={styles.textButton}>Logout</Text>
+        </Pressable>
         </View>
        </SafeAreaView>
        </ScrollView>
@@ -460,9 +478,45 @@ const styles = StyleSheet.create({
     generate: {
         alignItems: 'center',
         marginBottom: 50
-    }
-
-
+    },
+    button: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        paddingTop: 8,
+        marginTop: 20,
+        width: 235,
+        height: 40,
+        backgroundColor: '#5F038A',
+        borderRadius: 5,
+        shadowColor: 'rgba(0, 0, 0, 0.25)',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 1,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+    buttonIn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 8,
+        marginTop: 20,
+        width: 170,
+        height: 40,
+        backgroundColor:'#285D73',
+        borderRadius: 5,
+      },
+    
+    upDiv: {
+    alignItems: 'center',
+    bottom:'4%'
+      },
+    textButton: {
+    color: 'white',
+    fontFamily: 'Futura',
+    height: 30,
+    fontWeight: '600',
+    fontSize: 16,
+      }
 })
 
 export default ProfileScreen

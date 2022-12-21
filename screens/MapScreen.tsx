@@ -2,6 +2,7 @@ import { Button, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import AppBar from '../components/AppBar';
 import * as Location from 'expo-location';
+import * as RootNavigation from '../utils/RootNavigation'
 import MapView, { LatLng, Marker } from 'react-native-maps';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
@@ -17,6 +18,7 @@ export default function MapScreen() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [contactName, setContactName] = useState<string[]>([]);
   const [ newMap, setNewMap] = useState<LatLng[]>([]);
+  const [ newQrId, setNewQrId] = useState<string[]>([])
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -45,9 +47,11 @@ export default function MapScreen() {
           fetch(`https://onecard-backend.vercel.app/qrs/qr/${element.qrId._id}`)
           .then(response => response.json())
           .then(qrData => {
-            console.log(qrData, element.location)
+            
+            
             setNewMap([...newMap, {longitude:element.location.lon, latitude:element.location.lat}])
             setContactName([...contactName, `${qrData.responseArr.find((o:any) => !!o['firstName'])['firstName']} ${qrData.responseArr.find((o:any) => !!o['lastName'])['lastName']}`])
+            setNewQrId([...newQrId, `${qrData.responseArr.find((o:any) => !!o['id'])['id']}`])
           })
         });
       }
@@ -55,7 +59,7 @@ export default function MapScreen() {
   },[]);
 
   const markers = newMap.map((e,i) => {
-    return <Marker coordinate={{ latitude: e.latitude, longitude: e.longitude }} title={contactName[i]} />
+    return <Marker coordinate={{ latitude: e.latitude, longitude: e.longitude }} title={contactName[i]} onPress={() => RootNavigation.navigate('Details', {newQrId})}/>
   })
 
   return (

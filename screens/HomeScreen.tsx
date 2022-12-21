@@ -17,8 +17,10 @@ import Carousel from "react-native-reanimated-carousel";
 
 export default function HomeScreen() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
+
   const qrList:any = useSelector<{qr:QrState}>((state)=> state.qr.value)
   console.log(qrList)
+
   
   
   // useEffect(()=> {
