@@ -31,6 +31,7 @@ const DetailsScreen = ({route}:any) => {
     
     const infos = data.map((e,i)=> {
         const keyName:any = Object.keys(e)
+<<<<<<< HEAD
         const strings = String(keyName)
         const value = e[keyName]
         
@@ -42,15 +43,27 @@ const DetailsScreen = ({route}:any) => {
             </View>)
         }
         
+=======
+        return (<View key={i}>
+            <Image source={keyName.photo} style={{ width: 10, height: 10 }} />
+            <Text style={styles.profileField} >{keyName} :</Text>
+            <Text style={styles.profileInfos} >{e[keyName]}</Text>
+
+        </View>)
+>>>>>>> 4038d132ab4fe1c8d0a0005451ee96755d2732d1
     })
     const imgSource = '../assets/email-svgrepo-com.svg'
   return (
     <ScrollView>
+<<<<<<< HEAD
         
         <View style={styles.banner}>
             <Image source={{uri: coverSrc, width:'100%',height:200 }} /> 
             <Image source={{uri: photoSrc, width:'100%',height:200 }} /> 
         </View>
+=======
+        {/* <Text>QR ID: {qrId}</Text> */}
+>>>>>>> 4038d132ab4fe1c8d0a0005451ee96755d2732d1
         <View style={styles.profilePage}>{infos}</View>
     </ScrollView>
   )
