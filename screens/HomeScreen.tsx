@@ -50,16 +50,18 @@ export default function HomeScreen() {
           <IconButton  icon={<Icon as={MaterialIcons} name="person" size="10" color="white" top='-5'/>} onPress={() => RootNavigation.navigate('Profile')} />
         </View>
         <View style={styles.qrContainer}>
+
         <Carousel<QrObject> data={qrList}
         width={Dimensions.get('window').width}
         height={(Dimensions.get('window').width * 1.33)}
           renderItem={({item}) => {
             return <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav}/>
           }} />
+
         </View>
         <Pressable 
         style={{marginTop: 300, alignItems: 'center'}}
-        onPress={()=> RootNavigation.navigate('Details', {qrId: '63a042da2b185ed67060d0ea'})}>
+        onPress={()=> RootNavigation.navigate('Details', {qrId: '63a347de7819ee36da6098df'})}>
           <Text>Test dynamic page</Text>
           </Pressable>
     </NativeBaseProvider>

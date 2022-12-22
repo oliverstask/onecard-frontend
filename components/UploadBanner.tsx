@@ -17,20 +17,20 @@ export default function UploadBanner() {
     });
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
-      // const formData = new FormData()
-      // formData.append('photoFromFront', {
-      //   //@ts-ignore
-      //   uri: _image.assets[0].uri,
-      //   name: 'photo.jpg',
-      //   type: 'image/jpeg'
-      // })
-      // fetch(`https://onecard-backend.vercel.app/settings/cover/${userId}`, {
-      //   method: 'POST',
-      //   body: formData
-      // }).then((response)=> response.json())
-      // .then((data)=> {
-      //   console.log(data)
-      // })
+      const formData = new FormData()
+      formData.append('photoFromFront', {
+        //@ts-ignore
+        uri: _image.assets[0].uri,
+        name: 'photo.jpg',
+        type: 'image/jpeg'
+      })
+      fetch(`https://onecard-backend.vercel.app/settings/cover/${userId}`, {
+        method: 'POST',
+        body: formData
+      }).then((response)=> response.json())
+      .then((data)=> {
+        console.log(data)
+      })
     }
   };
   console.log('image------', image)
