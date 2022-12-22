@@ -7,8 +7,20 @@ export default function UploadBanner() {
   const [image, setImage] = useState<string>('');
   const [imgSrc, setImgSrc] = useState("Invalid Image Source");
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
-
+  useEffect(()=> {
+    (async ()=>{
+      const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${userId}`)
+      const response = await fetchData.json()
+      console.log('response ____________',response)
+      if (response.cover){
+        setImage(response.cover)
+      } else {
+        console.log('default banner')
+      }
+    })()
+  }, [])
   const addImage = async () => {
+    
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -24,6 +36,7 @@ export default function UploadBanner() {
         name: 'photo.jpg',
         type: 'image/jpeg'
       })
+      
       fetch(`https://onecard-backend.vercel.app/settings/cover/${userId}`, {
         method: 'POST',
         body: formData
@@ -33,7 +46,7 @@ export default function UploadBanner() {
       })
     }
   };
-  console.log('image------', image)
+  // console.log('image------', image)
 
   return (
     <TouchableOpacity onLongPress={addImage} style={imageUploaderStyles.uploadBtn} >

@@ -58,10 +58,10 @@ export default function HomeScreen() {
             return <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav}/>
           }} />
 
-        </View>
+        </View >
         <Pressable 
-        style={{marginTop: 300, alignItems: 'center'}}
-        onPress={()=> RootNavigation.navigate('Details', {qrId: '63a347de7819ee36da6098df'})}>
+        style={{marginTop: 0, alignItems: 'center', backgroundColor: 'red'}}
+        onPress={()=> RootNavigation.navigate('Details', {qrId: '63a443e2af265989c64fcb42'})}>
           <Text>Test dynamic page</Text>
           </Pressable>
     </NativeBaseProvider>

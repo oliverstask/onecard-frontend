@@ -9,7 +9,9 @@ const DetailsScreen = ({route}:any) => {
     
 
     const [data, setData] = useState<string[]>([])
-
+    const [photoSrc, setPhotoSrc] = useState<string>('')
+    const [coverSrc, setCoverSrc] = useState<string>('')
+    console.log(coverSrc, photoSrc)
     
 
 
@@ -19,7 +21,9 @@ const DetailsScreen = ({route}:any) => {
             const fetchData = await fetch(`https://onecard-backend.vercel.app/qrs/qr/${qrId}`)
             const response = await fetchData.json()
             
-            setData(response?.responseArr)
+            setData(response.responseArr)
+            setPhotoSrc(response.responseArr[3].photo)
+            setCoverSrc(response.responseArr[4].cover)
         })()
     }, [])
 
@@ -27,17 +31,26 @@ const DetailsScreen = ({route}:any) => {
     
     const infos = data.map((e,i)=> {
         const keyName:any = Object.keys(e)
-        return (<View key={i}>
-            <Text style={styles.profileField} >{keyName} :</Text>
-            <Text style={styles.profileInfos} >{e[keyName]}</Text>
-
-        </View>)
+        const strings = String(keyName)
+        const value = e[keyName]
+        
+        if (strings !== 'photo' && strings !== 'cover'){
+            return (<View key={i}>
+                <Text style={styles.profileField} >{keyName} :</Text>
+                <Text style={styles.profileInfos} >{e[keyName]}</Text>
+    
+            </View>)
+        }
+        
     })
     const imgSource = '../assets/email-svgrepo-com.svg'
   return (
     <ScrollView>
-        {/* <Text>QR ID: {qrId}</Text> */}
-        <View style={styles.banner}></View>
+        
+        <View style={styles.banner}>
+            <Image source={{uri: coverSrc, width:'100%',height:200 }} /> 
+            <Image source={{uri: photoSrc, width:'100%',height:200 }} /> 
+        </View>
         <View style={styles.profilePage}>{infos}</View>
     </ScrollView>
   )
@@ -47,11 +60,23 @@ export default DetailsScreen
 
 const styles = StyleSheet.create({
     banner: {
-        width: '100%',
-        height: 100,
-        margin: 0,
-        padding: 0,
-        backgroundColor: '#0F2E3A'
+        // margin: 0,
+        // padding: 0,
+        // position: 'absolute',
+        // top: 0,
+        // left: 0
+        marginTop: 200,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    photo: {
+        // borderRadius: 50,
+        // position: 'absolute',
+        // top: 50,
+        // left: 50
+       
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     profilePage: {
         marginTop: 30
@@ -67,13 +92,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         fontFamily: 'Futura'
     },
-    contactIcon: {
-        borderRadius: 50,
-        
-        width: 100,
-        height: 100
-    },
-    image: {
-        color: 'black'
-    }
+    
+   
 })

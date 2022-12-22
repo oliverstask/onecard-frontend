@@ -3,9 +3,9 @@ import { Image, View, Platform, TouchableOpacity, Text, StyleSheet } from 'react
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector } from 'react-redux'
 import { AuthState } from '../reducers/auth'
-const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
 
 export default function UploadAvatar() {
+  const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
   const [image, setImage] = useState('');
   const [imgSrc, setImgSrc] = useState("Invalid Image Source");
 
@@ -17,9 +17,22 @@ export default function UploadAvatar() {
           console.log('Media Permissions are granted')
     }
 }
-    useEffect(() => {
-     checkForCameraRollPermission()
-      }, []);
+
+useEffect(()=> {
+  (async ()=>{
+    const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${userId}`)
+    const response = await fetchData.json()
+    console.log('response ____________',response)
+    if (response.photo){
+      setImage(response.photo)
+    } else {
+      console.log('default profile picture')
+    }
+  })()
+}, [])
+useEffect(() => {
+  checkForCameraRollPermission()
+  }, []);
 
   
   const addImage = async () => {
@@ -39,6 +52,7 @@ export default function UploadAvatar() {
         name: 'photo.jpg',
         type: 'image/jpeg'
       })
+      
       fetch(`https://onecard-backend.vercel.app/settings/photo/${userId}`, {
         method: 'POST',
         body: formData
