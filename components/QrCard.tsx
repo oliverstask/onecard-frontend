@@ -39,13 +39,13 @@ const QrCard = (props: any) => {
 
   const handleDelete = async() => {
     dispatch(deleteQr(qrId))
-    // const fetchDelete = await fetch('https://onecard-backend.vercel.app/qrs', {
-    //   method: 'DELETE',
-    //   headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify({qrId})
-    // })
-    // const response = await fetchDelete.json()
-    // console.log(response)
+    const fetchDelete = await fetch('https://onecard-backend.vercel.app/qrs', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({qrId})
+    })
+    const response = await fetchDelete.json()
+    console.log(response)
     
   }
   return (
@@ -57,6 +57,7 @@ const QrCard = (props: any) => {
         <QRCode size={250} value={`https://onecard-backend.vercel.app/qrs/qr/${props.qrId}`}/>
         <View style={{flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginTop: 40, bottom:'4%'}}>
             <FontAwesome name={starIcon} size={35} color='#FDCC4D' onPress={()=> handleFav()}/>
+            {/* <Text style={{top: 12, color: '#788F99'}}>Scanned {props.numScans}x</Text> */}
             <Pressable onPress={()=> handleDelete()}>
               <FontAwesome name='trash-o' size={35} color='#942E40'/>
             </Pressable>

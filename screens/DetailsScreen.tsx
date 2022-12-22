@@ -11,8 +11,13 @@ const DetailsScreen = ({route}:any) => {
     const [data, setData] = useState<string[]>([])
     const [photoSrc, setPhotoSrc] = useState<string>('')
     const [coverSrc, setCoverSrc] = useState<string>('')
-    console.log(coverSrc, photoSrc)
+    // console.log(coverSrc, photoSrc)
     
+    const transformCamelCase = (string: string) => {
+        const newString = string.replace(/([A-Z]+)*([A-Z][a-z])/g, "$1 $2")
+        return newString.charAt(0).toUpperCase() + newString.slice(1)
+     }
+     
 
 
 
@@ -35,7 +40,7 @@ const DetailsScreen = ({route}:any) => {
         
         if (strings !== 'photo' && strings !== 'cover'){
             return (<View key={i}>
-                <Text style={styles.profileField} >{keyName} :</Text>
+                <Text style={styles.profileField} >{transformCamelCase(strings)} :</Text>
                 <Text style={styles.profileInfos} >{e[keyName]}</Text>
     
             </View>)

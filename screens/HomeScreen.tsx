@@ -56,15 +56,15 @@ export default function HomeScreen() {
         width={Dimensions.get('window').width}
         height={(Dimensions.get('window').width * 1.33)}
           renderItem={({item}) => {
-            return <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav}/>
+            item.isVisible && <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav} numScans={item}/>
           }} />
 
         </View >
-        <Pressable 
+        {/* <Pressable 
         style={{marginTop: 0, alignItems: 'center', backgroundColor: 'red'}}
         onPress={()=> RootNavigation.navigate('Details', {qrId: '63a443e2af265989c64fcb42'})}>
           <Text>Test dynamic page</Text>
-          </Pressable>
+          </Pressable> */}
     </NativeBaseProvider>
   </ScrollView>
     

@@ -9,7 +9,8 @@ export type QrObject = {
     infos: string[],
     isFav: boolean,
     qrName: string,
-    numScans: number
+    numScans: number,
+    isVisible: boolean
 }
 const initialState: QrState = {
     value: []
@@ -38,9 +39,8 @@ export const qrSlice = createSlice({
                     e.isFav = false
                 }
             } );
-            
-            
         }
+        
         
      }
 
