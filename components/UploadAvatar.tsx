@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Image, View, Platform, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useSelector } from 'react-redux'
+import { AuthState } from '../reducers/auth'
+const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
 
 export default function UploadAvatar() {
   const [image, setImage] = useState('');
@@ -29,6 +32,20 @@ export default function UploadAvatar() {
     
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
+      const formData = new FormData()
+      formData.append('photoFromFront', {
+        //@ts-ignore
+        uri: _image.assets[0].uri,
+        name: 'photo.jpg',
+        type: 'image/jpeg'
+      })
+      fetch(`https://onecard-backend.vercel.app/settings/photo/${userId}`, {
+        method: 'POST',
+        body: formData
+      }).then((response)=> response.json())
+      .then((data)=> {
+        console.log(data)
+      })
     }
   };
   

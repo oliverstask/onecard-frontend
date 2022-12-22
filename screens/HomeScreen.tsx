@@ -35,24 +35,22 @@ export default function HomeScreen() {
       const list = copyList.sort((a, b)=> {
           return a.isFav? -1 : 1;
         })
-  .map((data: any,i)=> {
+  // .map((data: any,i)=> {
     
 
-    // if (i === 0){
-    return <QrCard qrName={data.qrName} qrId={data._id} key={i} isFav={data.isFav}/>
-    // } 
-    // else {
-    //   return <OtherQrs qrName={data.qrName} qrId={data._id} key={i} isFav={data.isFav}/>
-    //   }
-  })
+  //   // if (i === 0){
+  //   return <QrCard qrName={data.qrName} qrId={data._id} key={i} isFav={data.isFav}/>
+  //   // } 
+  //   // else {
+  //   //   return <OtherQrs qrName={data.qrName} qrId={data._id} key={i} isFav={data.isFav}/>
+  //   //   }
+  // })
  return (
   <ScrollView>
     <NativeBaseProvider>
-
         <View>
           <UploadBanner/>
         </View>
-
         <View style={styles.avatar}>
           <UploadImage />
         </View>
@@ -60,21 +58,18 @@ export default function HomeScreen() {
           <IconButton  icon={<Icon as={MaterialIcons} name="person" size="10" color="white" top='-5'/>} onPress={() => RootNavigation.navigate('Profile')} />
         </View>
         <View style={styles.qrContainer}>
-        <Carousel<QrObject> 
-          //@ts-ignore
-        data={qrList}
+        <Carousel<QrObject> data={qrList}
         width={Dimensions.get('window').width}
         height={(Dimensions.get('window').width * 1.33)}
           renderItem={({item}) => {
             return <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav}/>
           }} />
-
         </View>
-        {/* <Pressable 
+        <Pressable 
         style={{marginTop: 300, alignItems: 'center'}}
         onPress={()=> RootNavigation.navigate('Details', {qrId: '63a042da2b185ed67060d0ea'})}>
           <Text>Test dynamic page</Text>
-          </Pressable> */}
+          </Pressable>
     </NativeBaseProvider>
   </ScrollView>
     

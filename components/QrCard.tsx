@@ -39,13 +39,13 @@ const QrCard = (props: any) => {
 
   const handleDelete = async() => {
     dispatch(deleteQr(qrId))
-    const fetchDelete = await fetch('https://onecard-backend.vercel.app/qrs', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({qrId})
-    })
-    const response = await fetchDelete.json()
-    console.log(response)
+    // const fetchDelete = await fetch('https://onecard-backend.vercel.app/qrs', {
+    //   method: 'DELETE',
+    //   headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({qrId})
+    // })
+    // const response = await fetchDelete.json()
+    // console.log(response)
     
   }
   return (

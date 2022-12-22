@@ -21,8 +21,9 @@ export default function ContactScreen() {
     
   useEffect(() => {
     (async () => {
+      console.log(userId)
     fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-    .then(response => response.json()).then()
+    .then(response => response.json())
     .then(data => {
       console.log(data)
        if (data) {

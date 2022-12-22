@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Image, View, Platform, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-
+import { useSelector } from 'react-redux'
+import { AuthState } from '../reducers/auth'
 export default function UploadBanner() {
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState<string>('');
   const [imgSrc, setImgSrc] = useState("Invalid Image Source");
+  const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
 
   const addImage = async () => {
     let _image = await ImagePicker.launchImageLibraryAsync({
@@ -13,11 +15,25 @@ export default function UploadBanner() {
       aspect: [4,3],
       quality: 1,
     });
-    
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
+      const formData = new FormData()
+      formData.append('photoFromFront', {
+        //@ts-ignore
+        uri: _image.assets[0].uri,
+        name: 'photo.jpg',
+        type: 'image/jpeg'
+      })
+      fetch(`https://onecard-backend.vercel.app/settings/cover/${userId}`, {
+        method: 'POST',
+        body: formData
+      }).then((response)=> response.json())
+      .then((data)=> {
+        console.log(data)
+      })
     }
   };
+  console.log('image------', image)
 
   return (
     <TouchableOpacity onLongPress={addImage} style={imageUploaderStyles.uploadBtn} >
