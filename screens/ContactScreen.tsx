@@ -69,7 +69,14 @@ if (sortOption === 'alphabetical') {
        return 0;
      })
 } else if (sortOption === 'date') {
-  filteredContacts.sort((a, b) => a.transaction.date - b.transaction.date);
+  filteredContacts.sort((a, b) => {
+    
+    const dateA: any = new Date(a.transaction.date);
+    const dateB: any = new Date(b.transaction.date);
+  
+    
+    return dateB - dateA;
+  });
 }
 
 
