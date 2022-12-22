@@ -20,14 +20,6 @@ export default function HomeScreen() {
   const qrList = useSelector<{qr:QrState}>((state)=> state.qr.value)
 
   
-  
-  // useEffect(()=> {
-    //   (async()=> {
-      
-      
-      // })()
-      // },[])
-      
       
       console.log(qrList)
       //@ts-ignore
