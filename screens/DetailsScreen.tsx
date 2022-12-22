@@ -28,6 +28,7 @@ const DetailsScreen = ({route}:any) => {
     const infos = data.map((e,i)=> {
         const keyName:any = Object.keys(e)
         return (<View key={i}>
+            <Image source={keyName.photo} style={{ width: 10, height: 10 }} />
             <Text style={styles.profileField} >{keyName} :</Text>
             <Text style={styles.profileInfos} >{e[keyName]}</Text>
 
@@ -37,7 +38,6 @@ const DetailsScreen = ({route}:any) => {
   return (
     <ScrollView>
         {/* <Text>QR ID: {qrId}</Text> */}
-        <View style={styles.banner}></View>
         <View style={styles.profilePage}>{infos}</View>
     </ScrollView>
   )

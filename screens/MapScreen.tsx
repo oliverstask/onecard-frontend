@@ -3,36 +3,44 @@ import React from 'react';
 import AppBar from '../components/AppBar';
 import * as Location from 'expo-location';
 import * as RootNavigation from '../utils/RootNavigation'
-import MapView, { Callout, LatLng, Marker } from 'react-native-maps';
+import MapView from "react-native-map-clustering";
+import { Callout, LatLng, Marker, Region } from 'react-native-maps';
 import { useEffect, useState } from 'react';
 import Modal from 'react-native-modal';
 import { useSelector } from 'react-redux';
 import { AuthState } from '../reducers/auth';
 import { ItemClick } from 'native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types';
-import { Popover, Button} from 'native-base';
+import { Popover, Button, HStack, Spinner, Heading} from 'native-base';
 
-
-
+const INITIAL_LOCATION = {
+  latitude: 0,
+  longitude: 0,
+  latitudeDelta: 1,
+  longitudeDelta: 1,
+}
 
 export default function MapScreen() {
-
-  const [currentPosition, setCurrentPosition] = useState<LatLng>();
+  
+  const [currentPosition, setCurrentPosition] = useState<LatLng>({latitude:0,longitude:0});
   const [isModalVisible, setModalVisible] = useState(false);
-  const [contactName, setContactName] = useState<string[]>([]);
-  const [ newMap, setNewMap] = useState<LatLng[]>([]);
+  const [ contactData, setContactData] = useState<any[]>([]);
   const [ newQrId, setNewQrId] = useState<string[]>([])
-  const [ newDate, setNewDate ] = useState<string>('')
+  const [ newDate, setNewDate ] = useState<string[]>([])
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-
+  
+  
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status === 'granted') {
+        const location = await Location.getCurrentPositionAsync({});
+        INITIAL_LOCATION.latitude = location.coords.latitude
+        INITIAL_LOCATION.longitude = location.coords.longitude
         Location.watchPositionAsync({ distanceInterval: 10 },
           (location) => {
             setCurrentPosition(location?.coords);
@@ -42,54 +50,54 @@ export default function MapScreen() {
   }, []);
 
   useEffect(() => {
-    fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-    .then(response => response.json())
-    .then(data => {
-      if (data) {
-        console.log(data)
-         data.response.forEach((element:any) => {
-        //  
-         const oDate = element.transaction.date
-            
-           setNewMap([...newMap, {longitude:element.transaction.location.lon, latitude:element.transaction.location.lat}])
-           setContactName([...contactName, `${element.contactName.firstName} ${element.contactName.lastName}`])
-           setNewQrId([...newQrId, `${element.transaction._id}`])
-           setNewDate(element.transaction.date)
-          })
-        // });
-      }
-    })
-  },[]);
-  
-  
+    (async () => {
+    const getTransactions = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+    const transactionData = await getTransactions.json()
+    setContactData(transactionData.response)
+  })();
+
+  }, []);
  
-  const markers = newMap.map((e,i) => {
+  const markers = contactData.map((e,i) => {
     return (
-      <Marker pinColor={'random'}
-        coordinate={{ latitude: e.latitude, longitude: e.longitude }}
-        title={contactName[i]} 
+      <Marker pinColor={'random'} key={i}
+        coordinate={{ latitude: e.transaction.location.lat, longitude: e.transaction.location.lon }}
         // onPress={() => RootNavigation.navigate('Details', {newQrId})}
         >
           <Callout>
             <View>
-              <Text style={styles.textButton1}>{contactName[i]}</Text>
-              <Text>You've met on the {new Date(newDate).toLocaleDateString()} </Text>
-              <Button style={styles.button1} onPress={() => RootNavigation.navigate('Details', {newQrId})}>Contact details</Button>
+              <Text style={styles.textButton1}>{e.contactName.firstName} {e.contactName.lastName}</Text>
+              <Text>You've met on the {new Date(e.transaction.date).toLocaleDateString()} </Text>
+              <Button style={styles.button1} onPress={() => RootNavigation.navigate('Details', {qrId:e.transaction.qrId._id})}>Contact details</Button>
             </View>
           </Callout>
         </Marker>
     )
   })
 
+
+
   return (
     <>
     <AppBar screenName='Map' />
     <View style={styles.container} >
       
-
-      <MapView style={styles.map}>
-        {markers}
-      </MapView>
+      {
+        INITIAL_LOCATION.longitude === 0 &&
+        <HStack space={2} justifyContent="center" alignItems='center' marginTop='250'>
+      <Spinner accessibilityLabel="Loading posts" color='#5F038A' size="lg"/>
+      <Heading color="black" fontSize="md" fontFamily='Futura' fontWeight='600'>
+        Your Map is loading
+      </Heading>
+    </HStack>
+      }
+      { INITIAL_LOCATION.longitude !== 0 &&
+        <MapView style={styles.map}
+          initialRegion={INITIAL_LOCATION}
+        >
+          {markers}
+        </MapView>
+      }
     </View>
     <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
         <View style={styles.centeredView} >

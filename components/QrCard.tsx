@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import QRCode from 'react-native-qrcode-svg';
-import { View, Text, Pressable} from 'react-native'
+import { View, Text, Pressable, StyleSheet} from 'react-native'
 import { useSelector } from 'react-redux'
 import { AuthState } from '../reducers/auth'
 
@@ -48,17 +48,32 @@ const QrCard = (props: any) => {
     
   }
   return (
-    <View style={{marginTop: 50, marginBottom: 50, alignItems: 'center', width: '100%', backgroundColor: 'white'}}>
-        <Text style={{fontSize: 30, marginBottom: 20}}>{props.qrName}</Text>
-        <QRCode size={300} value={`https://onecard-backend.vercel.app/qrs/qr/${props.qrId}`}/>
-        <View style={{flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginTop: 30}}>
+    <View>
+    <View style={styles.container}>
+        <Text style={{fontSize: 30, marginBottom: 20, fontFamily:'Futura', textShadowColor: 'rgba(0, 0, 0, 0.2)',
+  textShadowOffset: {width: -1, height: 1},
+  textShadowRadius: 10}}>{props.qrName}</Text>
+        <QRCode size={250} value={`https://onecard-backend.vercel.app/qrs/qr/${props.qrId}`}/>
+        <View style={{flexDirection: 'row', justifyContent: 'space-around', width: '100%', marginTop: 40, bottom:'4%'}}>
             <FontAwesome name={starIcon} size={35} color='#FDCC4D' onPress={()=> handleFav()}/>
             <Pressable onPress={()=> handleDelete()}>
               <FontAwesome name='trash-o' size={35} color='#942E40'/>
             </Pressable>
         </View>
     </View>
+    </View>
   )
 }
 
+const styles = StyleSheet.create({
+container: { 
+  alignItems: 'center', 
+  width: '90%',
+  margin:'5%',
+  top:'4%', 
+  backgroundColor: 'white' , 
+  borderRadius:20, 
+ 
+}
+})
 export default QrCard
