@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Text, IconButton, Icon, View, Modal, Radio, Input, Box, FlatList, HStack, Avatar, VStack, Spacer} from "native-base";
 import * as RootNavigation from '../utils/RootNavigation'
 import AppBar from "../components/AppBar";
@@ -10,6 +10,7 @@ import { BlurView} from "expo-blur";
 import { useSelector } from 'react-redux';
 import { AuthState } from '../reducers/auth';
 import { RadioButton } from "react-native-paper";
+import { useFocusEffect } from '@react-navigation/native'
 
 export default function ContactScreen() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -19,41 +20,17 @@ export default function ContactScreen() {
   const [sortOption, setSortOption] = useState<'alphabetical'|'date'>('date');
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
 
-    
-  useEffect(() => {
-    (async () => {
-<<<<<<< HEAD
-      console.log(userId)
-    fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-       if (data) {
-        data.response.forEach(async (element:any) => {
-        
-           const contact = {
-             id: element.transaction.qrId._id,
-             firstName: element.contactName.firstName,
-             lastName: element.contactName.lastName,
-             date: element.transaction.date
-           }
-           contactData && contactData.find((o) => { return o.id === contact.id}) && setContactData([...contactData, contact])
-           !contactData && setContactData([contact])
-         })
-       }
-     })
-=======
-    const getTransactions = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-    const transactionData = await getTransactions.json()
-    setContactData(transactionData.response)
->>>>>>> 4038d132ab4fe1c8d0a0005451ee96755d2732d1
-  })();
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        const getTransactions = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+        const transactionData = await getTransactions.json()
+        setContactData(transactionData.response)
+      })();
+    }, [])
+  );
+  
 
-  }, []);
-
-   /* useEffect(() => {
-      console.log(contactData)
-    },[contactData])*/
   
     const handleSortPress = (value:any) => {
       setSortOption(value);
@@ -158,7 +135,7 @@ if (sortOption === 'alphabetical') {
             borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
               <HStack space={[2, 3]} justifyContent="space-between">
                  <Avatar size="48px" source={{
-                         uri: item.avatarUrl
+                         uri: item.contactName.photo
                   }} />
                     <VStack>
                       <Text color="coolGray.800" top="3.5" fontSize="15">

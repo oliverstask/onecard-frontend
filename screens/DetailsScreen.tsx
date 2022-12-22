@@ -31,9 +31,7 @@ const DetailsScreen = ({route}:any) => {
     
     const infos = data.map((e,i)=> {
         const keyName:any = Object.keys(e)
-<<<<<<< HEAD
         const strings = String(keyName)
-        const value = e[keyName]
         
         if (strings !== 'photo' && strings !== 'cover'){
             return (<View key={i}>
@@ -43,27 +41,24 @@ const DetailsScreen = ({route}:any) => {
             </View>)
         }
         
-=======
-        return (<View key={i}>
-            <Image source={keyName.photo} style={{ width: 10, height: 10 }} />
-            <Text style={styles.profileField} >{keyName} :</Text>
-            <Text style={styles.profileInfos} >{e[keyName]}</Text>
-
-        </View>)
->>>>>>> 4038d132ab4fe1c8d0a0005451ee96755d2732d1
     })
-    const imgSource = '../assets/email-svgrepo-com.svg'
+ 
   return (
     <ScrollView>
-<<<<<<< HEAD
         
         <View style={styles.banner}>
-            <Image source={{uri: coverSrc, width:'100%',height:200 }} /> 
-            <Image source={{uri: photoSrc, width:'100%',height:200 }} /> 
+           
+            {coverSrc && <Image 
+            //@ts-ignore
+                source={{uri: coverSrc, width:'100%',height:200 }} 
+                style={styles.banner}
+            /> }
+            { photoSrc && <Image 
+            //@ts-ignore
+                source={{uri: photoSrc, width:150, height:150 }} 
+                style={styles.photo}
+            /> }
         </View>
-=======
-        {/* <Text>QR ID: {qrId}</Text> */}
->>>>>>> 4038d132ab4fe1c8d0a0005451ee96755d2732d1
         <View style={styles.profilePage}>{infos}</View>
     </ScrollView>
   )
@@ -75,24 +70,21 @@ const styles = StyleSheet.create({
     banner: {
         // margin: 0,
         // padding: 0,
-        // position: 'absolute',
-        // top: 0,
-        // left: 0
-        marginTop: 200,
+        marginTop: 0,
         alignItems: 'center',
         justifyContent: 'center'
     },
     photo: {
-        // borderRadius: 50,
-        // position: 'absolute',
-        // top: 50,
+        borderRadius: 500,
+        top: -77,
+        left: 70,
         // left: 50
        
         alignItems: 'center',
         justifyContent: 'center'
     },
     profilePage: {
-        marginTop: 30
+        top: -110
     },
     profileField: {
         fontSize: 17,

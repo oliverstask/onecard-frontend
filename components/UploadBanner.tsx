@@ -12,8 +12,9 @@ export default function UploadBanner() {
       const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${userId}`)
       const response = await fetchData.json()
       console.log('response ____________',response)
-      if (response.cover){
-        setImage(response.cover)
+
+      if (response.user.cover){
+        setImage(response.user.cover)
       } else {
         console.log('default banner')
       }

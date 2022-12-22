@@ -23,8 +23,8 @@ useEffect(()=> {
     const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${userId}`)
     const response = await fetchData.json()
     console.log('response ____________',response)
-    if (response.photo){
-      setImage(response.photo)
+    if (response.user.photo){
+      setImage(response.user.photo)
     } else {
       console.log('default profile picture')
     }
