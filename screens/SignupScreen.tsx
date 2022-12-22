@@ -137,6 +137,7 @@ export default function SignupScreen({
   const storeUserQrList = async(id: string)=> {
     const response = await fetch(`https://onecard-backend.vercel.app/qrs/user/${id}`)
     const userQrs = await response.json()
+
     dispatch(getAllQrs(userQrs.qrList))
   }
 

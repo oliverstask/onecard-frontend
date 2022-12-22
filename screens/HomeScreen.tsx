@@ -21,7 +21,7 @@ export default function HomeScreen() {
 
   
       
-      // console.log(qrList)
+  console.log(qrList)
       //@ts-ignore
       const copyList = [...qrList]
       const list = copyList.sort((a, b)=> {
@@ -50,16 +50,19 @@ export default function HomeScreen() {
           <IconButton  icon={<Icon as={MaterialIcons} name="person" size="10" color="white" top='-5'/>} onPress={() => RootNavigation.navigate('Profile')} />
         </View>
         <View style={styles.qrContainer}>
+          { 
+        //@ts-ignore
+          qrList.length ? <Text ></Text> : <Text style={{top: 70, fontSize: 20, width: '70%', textAlign: 'center', fontFamily: 'Futura'}}>Go to profile page to generate your first QR code ..</Text>}
         <Carousel<QrObject> 
         //@ts-ignore
         data={list}
         width={Dimensions.get('window').width}
         height={(Dimensions.get('window').width * 1.33)}
           renderItem={({item}) => {
-            item.isVisible && <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav} numScans={item}/>
-          }} />
-
-        </View >
+            return <QrCard qrName={item.qrName} qrId={item._id} isFav={item.isFav} numScans={item}/> 
+          }} /> 
+       
+        </View > 
         {/* <Pressable 
         style={{marginTop: 0, alignItems: 'center', backgroundColor: 'red'}}
         onPress={()=> RootNavigation.navigate('Details', {qrId: '63a443e2af265989c64fcb42'})}>
