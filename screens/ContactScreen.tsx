@@ -9,36 +9,22 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { BlurView} from "expo-blur";
 import { useSelector } from 'react-redux';
 import { AuthState } from '../reducers/auth';
+import { RadioButton } from "react-native-paper";
 
 export default function ContactScreen() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [order, setOrder] = useState<'az'|'date'>('az')
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("one");
-  const [contactData, setContactData] = useState<any[]>();
+  const [contactData, setContactData] = useState<any[]>([]);
+  const [sortOption, setSortOption] = useState<'alphabetical'|'date'>('date');
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId);
 
     
   useEffect(() => {
     (async () => {
-    fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
-    .then(response => response.json()).then()
-    .then(data => {
-      console.log(data)
-       if (data) {
-        data.response.forEach(async (element:any) => {
-        
-           const contact = {
-             id: element.transaction.qrId._id,
-             firstName: element.contactName.firstName,
-             lastName: element.contactName.lastName,
-             date: element.transaction.date
-           }
-           contactData && contactData.find((o) => { return o.id === contact.id}) && setContactData([...contactData, contact])
-           !contactData && setContactData([contact])
-         })
-       }
-     })
+    const getTransactions = await fetch(`https://onecard-backend.vercel.app/transactions/${userId}`)
+    const transactionData = await getTransactions.json()
+    setContactData(transactionData.response)
   })();
 
   }, []);
@@ -47,30 +33,45 @@ export default function ContactScreen() {
       console.log(contactData)
     },[contactData])*/
   
+    const handleSortPress = (value:any) => {
+      setSortOption(value);
+    };
  
 
   const handleSearch = (text:any) => {
     setSearchTerm(text);
   };
+  
+   let filteredContacts = contactData.filter((e) =>
+     e.contactName.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+     e.contactName.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+   );
 
-  // let filteredContacts = contactData.filter((e) =>
-  //   e.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   e.lastName.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
+//   filteredContacts = 
+//   (order === 'az' ? filteredContacts.sort((a,b)=>{
+//     if(a.firstName > b.firstName){
+//         return 1;
+//     }
+//     if(a.firstName < b.firstName){
+//         return -1;
+//     }
+//     return 0;
+// }) : 
+// filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0)))
 
-  /*filteredContacts = 
-  (order === 'az' ? filteredContacts.sort((a,b)=>{
-    if(a.firstName > b.firstName){
-        return 1;
-    }
-    if(a.firstName < b.firstName){
-        return -1;
-    }
-    return 0;
-}) : 
-filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - new Date(date2).setHours(0, 0, 0, 0)))
-*/
-
+if (sortOption === 'alphabetical') {
+  filteredContacts.sort((a,b)=>{
+         if(a.contactName.firstName > b.contactName.firstName){
+             return 1;
+         }
+         if(a.contactName.firstName < b.contactName.firstName){
+             return -1;
+         }
+       return 0;
+     })
+} else if (sortOption === 'date') {
+  filteredContacts.sort((a, b) => a.transaction.date - b.transaction.date);
+}
 
 
 
@@ -127,10 +128,10 @@ filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - n
   </Pressable>
   <View bottom='10'>
     <Box top="10">
-      <FlatList  data={contactData} renderItem={({item}) => {
+      <FlatList  data={filteredContacts} renderItem={({item}) => {
           
           
-          return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.id})}>
+          return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.transaction.qrId._id})}>
            <Box borderBottomWidth="1"
             borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
               <HStack space={[2, 3]} justifyContent="space-between">
@@ -139,17 +140,17 @@ filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - n
                   }} />
                     <VStack>
                       <Text color="coolGray.800" top="3.5" fontSize="15">
-                        {item.firstName} {item.lastName}
+                        {item.contactName.firstName} {item.contactName.lastName}
                       </Text>
                        
                      </VStack>
                   <Spacer />
               <Text fontSize="xs"color="coolGray.800" alignSelf="flex-start">
-                {`${new Date(item.date).toLocaleDateString()} ${new Date(item.date).toLocaleTimeString()}`}
+                {`${new Date(item.transaction.date).toLocaleDateString()} ${new Date(item.transaction.date).toLocaleTimeString()}`}
               </Text>
             </HStack>
           </Box>
-          </Pressable>)} }keyExtractor={item => item.id} />
+          </Pressable>)} }keyExtractor={item => item.transaction._id} />
     </Box>
           
             </View>
@@ -159,11 +160,16 @@ filteredContacts.sort((date1, date2) => new Date(date1).setHours(0, 0, 0, 0) - n
   
   <Modal.Content  height="100%" top='100%'>
    
-    <Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value}
-      onChange={nextValue => setOrder(nextValue as 'az'|'date')}>
-      <Radio value="az" my={1}>A-Z</Radio>
-      <Radio value="date" my={1}>Date</Radio>
-    </Radio.Group>
+  <Radio.Group name="myRadioGroup" onChange={handleSortPress} value={sortOption}>
+       
+          <Radio value="alphabetical" colorScheme="emerald" my={1}>
+          A-Z
+          </Radio>
+          <Radio value="date" colorScheme="purple" my={1}>
+          Date
+          </Radio>
+      
+      </Radio.Group>
   </Modal.Content>
   
 </Modal>
