@@ -21,7 +21,7 @@ export default function HomeScreen() {
 
   
       
-      console.log(qrList)
+      // console.log(qrList)
       //@ts-ignore
       const copyList = [...qrList]
       const list = copyList.sort((a, b)=> {

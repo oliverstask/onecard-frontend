@@ -3,6 +3,7 @@ import { Image, View, Platform, TouchableOpacity, Text, StyleSheet } from 'react
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector } from 'react-redux'
 import { AuthState } from '../reducers/auth'
+import { Buffer } from 'buffer'
 
 export default function UploadAvatar() {
   const userId = useSelector<{auth:AuthState}, string>((state) => state.auth.value?.userId)
@@ -39,27 +40,27 @@ useEffect(() => {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4,3],
+      aspect: [1,1],
       quality: 1,
+      base64: true
     });
     
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
-      const formData = new FormData()
-      formData.append('photoFromFront', {
-        //@ts-ignore
-        uri: _image.assets[0].uri,
-        name: 'photo.jpg',
-        type: 'image/jpeg'
-      })
+      const imageData = _image.assets[0].base64
+      const buffer = Buffer.from(imageData, 'base64')
       
+      console.log(imageData)
       fetch(`https://onecard-backend.vercel.app/settings/photo/${userId}`, {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'image/jpeg; charset=utf-8' },
+        body: buffer
       }).then((response)=> response.json())
       .then((data)=> {
         console.log(data)
       })
+      
+      
     }
   };
   

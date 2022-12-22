@@ -3,6 +3,9 @@ import { Image, View, Platform, TouchableOpacity, Text, StyleSheet } from 'react
 import * as ImagePicker from 'expo-image-picker';
 import { useSelector } from 'react-redux'
 import { AuthState } from '../reducers/auth'
+// import fs from 'react-native-fs'
+import { Buffer } from 'buffer'
+
 export default function UploadBanner() {
   const [image, setImage] = useState<string>('');
   const [imgSrc, setImgSrc] = useState("Invalid Image Source");
@@ -11,7 +14,7 @@ export default function UploadBanner() {
     (async ()=>{
       const fetchData = await fetch(`https://onecard-backend.vercel.app/settings/${userId}`)
       const response = await fetchData.json()
-      console.log('response ____________',response)
+      // console.log('response ____________',response)
 
       if (response.user.cover){
         setImage(response.user.cover)
@@ -25,29 +28,27 @@ export default function UploadBanner() {
     let _image = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4,3],
+      aspect: [16,9],
+      base64: true,
       quality: 1,
     });
     if (!_image.canceled) {
       setImage(_image.assets[0].uri);
-      const formData = new FormData()
-      formData.append('photoFromFront', {
-        //@ts-ignore
-        uri: _image.assets[0].uri,
-        name: 'photo.jpg',
-        type: 'image/jpeg'
-      })
+      const imageData = _image.assets[0].base64
+      const buffer = Buffer.from(imageData, 'base64')
       
+      console.log(imageData)
       fetch(`https://onecard-backend.vercel.app/settings/cover/${userId}`, {
         method: 'POST',
-        body: formData
+        headers: { 'Content-Type': 'image/jpeg; charset=utf-8' },
+        body: buffer
       }).then((response)=> response.json())
       .then((data)=> {
         console.log(data)
       })
     }
   };
-  // console.log('image------', image)
+ 
 
   return (
     <TouchableOpacity onLongPress={addImage} style={imageUploaderStyles.uploadBtn} >

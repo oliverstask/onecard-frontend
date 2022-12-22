@@ -137,11 +137,11 @@ if (sortOption === 'alphabetical') {
                  <Avatar size="48px" source={{
                          uri: item.contactName.photo
                   }} />
-                    <VStack>
-                      <Text color="coolGray.800" top="3.5" fontSize="15">
-                        {item.contactName.firstName} {item.contactName.lastName}
+                    <VStack style={styles.contactText}>
+                      <Text color="coolGray.800" fontSize="15">
+                        {item.contactName.firstName} {item.contactName.lastName} 
                       </Text>
-                       
+                      <Text style={styles.qrName}>   ( {item.transaction.qrId.qrName} )</Text>
                      </VStack>
                   <Spacer />
               <Text fontSize="xs"color="coolGray.800" alignSelf="flex-start">
@@ -239,5 +239,12 @@ absolute: {
 },
 options:{
   flexDirection: 'row'
+},
+contactText:{
+  flexDirection: 'row',
+  alignItems: 'center'
+},
+qrName: {
+  color: '#788F99'
 }
 })
