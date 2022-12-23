@@ -50,7 +50,7 @@ const QrCard = (props: any) => {
     
   }
   let display
-  // props.isVisible ? display = {} : {display: 'none'}
+  
 
   return (
       <View style={display}>
