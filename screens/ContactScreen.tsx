@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Text, IconButton, Icon, View, Modal, Radio, Input, Box, FlatList, HStack, Avatar, VStack, Spacer} from "native-base";
+import { Text, IconButton, Icon, View, Modal, Radio, Input, Box, FlatList, HStack, Avatar, VStack, Spacer, ScrollView} from "native-base";
 import * as RootNavigation from '../utils/RootNavigation'
 import AppBar from "../components/AppBar";
 import { StyleSheet } from "react-native";
@@ -134,7 +134,8 @@ if (sortOption === 'alphabetical') {
   </Pressable>
   <View bottom='10'>
     <Box top="10">
-      <FlatList  data={filteredContacts} renderItem={({item}) => {
+    
+      <FlatList  data={filteredContacts}  renderItem={({item}) => {
           
           
           return(<Pressable onPress={()=> RootNavigation.navigate('Details', {qrId: item.transaction.qrId._id})}>
@@ -187,7 +188,8 @@ const styles = StyleSheet.create({
 container: {
   flex: 1,
   backgroundColor: '#EEF3F6',
-  top: 50
+  top: 50,
+  marginBottom: 60
   
   },
 button: {
